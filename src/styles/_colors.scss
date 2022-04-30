@@ -1,0 +1,85 @@
+// COLORS
+$primary: rgb(0, 182, 215);
+$primary-2: rgb(29, 255, 70);
+$primary-3: #34C700;
+$secondary: #03DAC6;
+$secondary-2: #018786;
+
+$background: #F3F5F7;
+$surface: #FFFFFF;
+$error: #B00020;
+
+$on-primary: #FFFFFF;
+$on-secondary: #000000;
+$on-background: #000000;
+$on-surface: #000000;
+$on-error: #FFFFFF;
+
+.text-brand-green {
+    color: $primary-2;
+}
+
+.text-brand-blue {
+    color: $primary;
+}
+
+.bg-jt {
+    background-color: $background;
+}
+
+.bg-jt-primary {
+    background-color: $primary;
+}
+
+.bg-jt-primary-100 {
+    background-color:  rgb(196, 246, 255);
+}
+
+.bg-jt-primary-200 {
+    background-color:  rgb(158, 237, 255);
+}
+
+.bg-jt-primary-300 {
+    background-color:  rgb(121, 227, 255);
+}
+
+.bg-jt-primary-400 {
+    background-color:  rgb(84, 218, 255);
+}
+
+.bg-jt-primary-500 {
+    background-color:  rgb(47, 209, 255);
+}
+
+.from-jt-primary-200 {
+    --tw-gradient-from: rgb(158, 237, 255);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgb(147 197 253 / 0));
+}
+
+.bg-jt-primary2 {
+    background-color: $primary-2;
+}
+
+.bg-jt-primary3 {
+    background-color: $primary-3;
+}
+
+.border-jt-primary {
+    --tw-border-opacity: 1;
+    border-color: rgba(0, 182, 215, var(--tw-border-opacity));
+}
+
+.border-jt-primary2 {
+    --tw-border-opacity: 1;
+    border-color: rgba(29, 255, 70, var(--tw-border-opacity));
+}
+
+.hover\:border-jt-primary:hover {
+    --tw-border-opacity: 1;
+    border-color: rgba(0, 182, 215, var(--tw-border-opacity));
+}
+
+.hover\:border-jt-primary2:hover {
+    --tw-border-opacity: 1;
+    border-color: rgba(29, 255, 70, var(--tw-border-opacity));
+}
