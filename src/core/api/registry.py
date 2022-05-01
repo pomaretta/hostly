@@ -6,5 +6,8 @@ class RegistryAPI(APIComponent):
         super().__init__(api)
         self.name = 'registry'
 
-    def registry_greet(self):
-        return "Hello World!"
+    def registry_servers(self):
+        output = []
+        for server in self.api.registry.__get_registry_objects__():
+            output.append(server.to_json())
+        return output

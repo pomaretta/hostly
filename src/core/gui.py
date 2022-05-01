@@ -55,7 +55,7 @@ def main(
 
     # TODO: Create Window
     window = webview.create_window(
-        title=f"Hostly {__version__}",
+        title=f"Hostly",
         url=default_path,
         html=None, # TODO: Create HTML Framework
         js_api=api, # TODO: Add API

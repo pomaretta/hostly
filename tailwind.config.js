@@ -9,4 +9,13 @@ module.exports = {
 		require("tailwindcss-animate"),
 		require("daisyui"),
 	],
+	daisyui: {
+		themes: [
+			{
+				hostly: {
+					primary: "#00b6d7"
+				}
+			}
+		]
+	}
 }
