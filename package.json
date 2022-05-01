@@ -26,7 +26,10 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "BUILD_PATH='./portal' react-scripts build",
+    "build:macos": "BUILD_PATH='./portal' react-scripts build && ./.venv/bin/python3 build-macos.py py2app",
+    "build:windows": "",
+    "build:linux": "",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

@@ -38,17 +38,25 @@ def main(
 
     api = BrowserAPI(api=web_api)
 
-    app_path = os.path.join(
+    default_path = os.path.join(
         os.path.dirname(os.path.abspath(__file__)),
         '..',
         '..',
-        'build',
+        'portal',
+    )
+    darwin_path = os.path.join(
+        '..',
+        'Resources',
+        'portal',
     )
     
+    if os.path.exists(darwin_path):
+        default_path = darwin_path
+
     # TODO: Create Window
     window = webview.create_window(
-        title=f"HostlyMC - {__version__}V",
-        url=app_path,
+        title=f"Hostly {__version__}",
+        url=default_path,
         html=None, # TODO: Create HTML Framework
         js_api=api, # TODO: Add API
         width=1280, # TODO: Asign correct size
@@ -57,7 +65,7 @@ def main(
         fullscreen=False,
         min_size=(960, 680), # TODO: Asign correct size
         hidden=False,
-        frameless=False,
+        frameless=False, # TODO: Change on future
         easy_drag=True,
         minimized=False,
         on_top=False, # TODO: Asign correct value
