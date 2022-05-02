@@ -8,9 +8,6 @@ import {
 // Context
 import Context from '../context/App';
 
-// Components
-import Test from './Test';
-
 // Router
 class Router extends React.Component {
     render() {

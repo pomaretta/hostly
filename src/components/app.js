@@ -36,7 +36,7 @@ class Wrapper extends Component {
         };
 
     }
-
+ 
     setCurrentRoute = (route) => {
         this.setState({
             currentRoute: route,
