@@ -1,4 +1,4 @@
-from ..domain.api import API, Configuration, JVMConfiguration, Registry, Versions
+from ..domain.api import API, Configuration, JVMConfiguration, Registry, Versions, Credentials
 from ..domain.log import Log
 
 # TODO: Import modules
@@ -12,8 +12,8 @@ class WebAPI(API):
         ServerAPI
     ]
 
-    def __init__(self, configuration: Configuration, jvm: JVMConfiguration, registry: Registry, versions: Versions, log: Log) -> None:
-        super().__init__(configuration, jvm, registry, versions)
+    def __init__(self, configuration: Configuration, jvm: JVMConfiguration, registry: Registry, versions: Versions, log: Log, credentials: Credentials) -> None:
+        super().__init__(configuration, jvm, registry, versions, credentials)
         self.log = log
         self._default = [
             *self._default,

@@ -10,6 +10,12 @@ import Context from '../context/App';
 
 // Router
 class Router extends React.Component {
+
+    componentDidMount() {        
+        // Get the servers
+        this.context.getRegistryServers();
+    }
+
     render() {
         return (
             <BrowserRouter>

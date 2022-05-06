@@ -3,26 +3,61 @@ import Context from "../context/App";
 import { classNames } from "../utils/Utils";
 
 function Server(props) {
+
+    let providerImage = "/images/vanilla.png"
+    switch (props.data.provider) {
+        case "vanilla":
+            providerImage = "/images/vanilla.png"
+            break;
+        case "forge":
+            providerImage = "/images/forge.jpeg"
+            break;
+        default:
+            providerImage = "/images/vanilla.png"
+            break;
+    }
+
     return (
-        <div
+        <a
+            key={props.key}
             className="w-full rounded-md | bg-white dark:bg-gray-700 shadow-lg hover:shadow-xl | h-24 | flex items-center justify-between | p-4 | cursor-pointer"
             style={{
                 transition: "all 0.5s ease-in-out",
             }}
+            href={`/servers/${props.data.id}`}
         >
             <div className="w-auto | flex items-center justify-start | h-full | space-x-6">
-                <img className="w-16 h-16 rounded-lg" src="/images/vanilla.png" />
+                <img className="w-16 h-16 rounded-lg" src={providerImage} />
                 <div className="flex flex-col items-start justify-center | h-full">
-                    <h5 className="text-xl font-bold">MadKaos</h5>
+                    <h5 className="text-xl font-bold">
+                        {
+                            props.data.extra && props.data.extra.properties && props.data.extra.properties.motd ?
+                                props.data.extra.properties.motd
+                                : props.data.id
+                        }
+                    </h5>
                     <p className="text-md">
-                        Vanilla
-                        <span className="ml-3 font-bold">1.18</span>
+                        {
+                            String(props.data.provider).replace(/\b\w/g, l => l.toUpperCase())
+                        }
+                        <span className="ml-3 font-bold">
+                            {props.data.version}
+                        </span>
                     </p>
                 </div>
                 <div className="flex flex-col items-start justify-center | h-full w-auto">
                     <h5 className="text-xl font-bold">Current IP</h5>
                     <p className="text-md font-bold | flex space-x-2">
-                        188.79.0.21:25565
+                        <span>
+                            {
+                                props.data.ip
+                            }
+                            {
+                                props.data.extra && props.data.extra.properties && props.data.extra.properties.port ?
+                                `:${props.data.extra.properties.port}`
+                                : ":25565"
+                            }
+                        </span> 
                         <a
                             className="w-5 h-5 ml-2 text-brand-blue tooltip tooltip-right tooltip-primary"
                             data-tip="Successfully copied to clipboard!"
@@ -64,7 +99,9 @@ function Server(props) {
                 </div>
                 <div className="flex flex-col justify-between items-center | space-y-2">
                     <button className="uppercase | w-full | text-sm | font-bold | px-4 py-1 | bg-green-500 | rounded-md">
-                        Stopped
+                        {
+                            props.data.running ? "Running" : "Stopped"
+                        }
                     </button>
                     <button className="btn btn-sm btn-primary | w-full">
                         Run
@@ -76,13 +113,15 @@ function Server(props) {
                     </button>
                 </div>
             </div>
-        </div>
+        </a>
     );
 }
 
 function Recently(props) {
     return (
-        <div className="h-64 | flex justify-between items-center | space-x-6">
+        <div 
+            className="h-64 | flex justify-between items-center | space-x-6"
+        >
             <div
                 className="relative | w-4/6 h-full | flex justify-between items-center | text-white shadow-lg rounded-lg | overflow-hidden | hover:shadow-2xl hover:shadow-orange-300 dark:hover:shadow-orange-600"
                 style={{
@@ -155,10 +194,14 @@ class Servers extends Page {
 
     title = "Servers";
 
+    componentDidMount() {
+        // this.context.getRegistryServers();
+    }
+
     getContent() {
         return (
-            <div>
-                <div className="relative | p-4 | space-y-6 | flex flex-col">
+            <div className="flex flex-col w-full">
+                <div className="relative | p-4 | space-y-6 | flex flex-col | w-full">
 
                     <Recently />
 
@@ -172,22 +215,25 @@ class Servers extends Page {
                     </div>
 
                     <div className="w-full | flex flex-col justify-start items-center | space-y-4">
-                        <Server />
-                        <Server />
-                        <Server />
-                        <Server />
-                        <Server />
+                        {
+                            this.context.registryServers && this.context.registryServers.objects.length > 0 ?
+                            (
+                                this.context.registryServers.objects.map((server, index) => {
+                                    return <Server data={server} key={index} />
+                                })
+                            ) : null
+                        }
                     </div>
 
                 </div>
 
-                <div className="flex items-center justify-center | mb-5">
+                {/* <div className="flex items-center justify-center | mb-5 | w-full">
                     <div class="btn-group">
                         <button class="btn">«</button>
                         <button class="btn">Page 22</button>
                         <button class="btn">»</button>
                     </div>
-                </div>
+                </div> */}
 
             </div>
         )

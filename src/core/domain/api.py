@@ -5,6 +5,7 @@ from mscli.domain.configuration.configuration import Configuration
 from mscli.domain.configuration.registry import Registry
 from mscli.domain.jvm.jvm import JVMConfiguration
 from mscli.domain.versions.version import Versions
+from mscli.domain.credentials.credentials import Credentials
 
 class API:
 
@@ -20,12 +21,14 @@ class API:
         configuration: Configuration,
         jvm: JVMConfiguration,
         registry: Registry,
-        versions: Versions
+        versions: Versions,
+        credentials: Credentials
     ) -> None:
         self.configuration = configuration
         self.jvm = jvm
         self.registry = registry
         self.versions = versions
+        self.credentials = credentials
         self.window = None
 
     def set_window(self, window: webview.Window) -> None:

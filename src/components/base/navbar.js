@@ -25,7 +25,9 @@ class Navbar extends React.Component {
 											this.props.title ?
 												(
 													<span className='ml-6 px-2 py-1 border border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white dark:hover:bg-white dark:hover:text-black dark:border-white dark:text-white | rounded-lg | text-sm | cursor-pointer'>
-														hostly
+														{
+															this.props.highlight
+														}
 													</span>
 												) : null
 										}

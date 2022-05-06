@@ -10,8 +10,14 @@ function classNames(...classes) {
 class Sidebar extends Component {
 
     render() {
+
+        let routeIndex = this.context.currentRoute;
+        if (this.props.overrideRoute) {
+            routeIndex= this.props.overrideRoute;
+        }
+
         return (
-            <div className="hidden sm:flex flex-col top-0 left-0 w-16 h-full border-r dark:border-0 | bg-white text-gray-800 | dark:bg-black dark:text-white | z-30">
+            <div className="hidden sm:flex flex-col top-0 left-0 w-16 h-full border-r dark:border-0 | bg-white text-gray-800 | dark:bg-gray-800 dark:text-white | z-30">
                 <div className="flex items-center justify-center h-14 text-3xl pt-4">
                     <p className="font-bold | dark:text-white text-black | pointer-events-none">
                         h.
@@ -33,8 +39,8 @@ class Sidebar extends Component {
                                             <Link
                                                 to={route.path}
                                                 className={classNames(
-                                                    this.context.currentRoute === index ? "border-jt-primary" : "",
-                                                    "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 hover:text-gray-800 border-l-4 border-transparent hover:border-jt-primary pr-6 | dark:hover:bg-black dark:hover:text-white"
+                                                    routeIndex === index ? "border-jt-primary" : "",
+                                                    "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 hover:text-gray-800 border-l-4 border-transparent hover:border-jt-primary pr-6 | dark:hover:bg-gray-700 dark:hover:text-white"
                                                 )}
                                                 onClick={() => this.context.setCurrentRoute(index)}
                                             >
@@ -57,7 +63,7 @@ class Sidebar extends Component {
                         }
                         <div className="mt-auto-important">
                             <li
-                                className="tooltip tooltip-right tooltip-primary | relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 dark:hover:bg-black dark:text-white border-l-4 border-transparent hover:border-jt-primary pr-6"
+                                className="tooltip tooltip-right tooltip-primary | relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-white border-l-4 border-transparent hover:border-jt-primary pr-6"
                                 data-tip="Launch"
                             >
                                 <span className="inline-flex justify-center items-center ml-4">

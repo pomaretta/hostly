@@ -2,7 +2,7 @@
   "name": "hostly",
   "version": "0.1.0",
   "private": true,
-  "homepage": ".",
+  "homepage": "/",
   "dependencies": {
     "@headlessui/react": "^1.5.0",
     "@heroicons/react": "^1.0.6",
@@ -26,8 +26,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "BUILD_PATH='./portal' react-scripts build",
-    "build:macos": "BUILD_PATH='./portal' react-scripts build && ./.venv/bin/python3 build-macos.py py2app",
+    "build": "BUILD_PATH='./portal' REACT_APP_ENVIRONMENT='PROD' react-scripts build",
+    "build:macos": "BUILD_PATH='./portal' REACT_APP_ENVIRONMENT='PROD' react-scripts build && ./.venv/bin/python3 build-macos.py py2app",
     "build:windows": "",
     "build:linux": "",
     "test": "react-scripts test",

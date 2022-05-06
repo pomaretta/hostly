@@ -6,12 +6,15 @@ from mscli.domain.configuration.configuration import Configuration
 from mscli.domain.configuration.registry import Registry
 from mscli.domain.jvm.jvm import JVMConfiguration
 from mscli.domain.versions.version import Version, Versions
+from mscli.domain.credentials.credentials import Credentials
+from mscli.core.configuration.registry import MinecraftRegistry
 
 from argparse import ArgumentParser
 from datetime import datetime
 
 from . import __version__
 from .api.api import WebAPI
+from .server import WebServer
 
 from .core.log import WebLog
 from .core.api import BrowserAPI
@@ -26,44 +29,53 @@ def main(
     registry: Registry,
     versions: Versions,
     log: WebLog,
+    credentials: Credentials,
 ) -> None:
+
+    registry = MinecraftRegistry(
+        json_data=registry.json_data
+    )
 
     web_api = WebAPI(
         configuration=configuration,
         jvm=jvm,
         registry=registry,
         versions=versions,
-        log=log
+        log=log,
+        credentials=credentials
     )
 
     api = BrowserAPI(api=web_api)
 
-    default_path = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        '..',
-        '..',
-        'portal',
-    )
-    darwin_path = os.path.join(
-        '..',
-        'Resources',
-        'portal',
-    )
-    
-    if os.path.exists(darwin_path):
-        default_path = darwin_path
+    # default_path = os.path.join(
+    #     os.path.dirname(os.path.abspath(__file__)),
+    #     '..',
+    #     '..',
+    #     'portal',
+    # )
+    # darwin_path = os.path.join(
+    #     '..',
+    #     'Resources',
+    #     'portal',
+    # )
 
+    # if os.path.exists(darwin_path):
+    #     default_path = darwin_path
+
+    web_server = WebServer()
+    
     # TODO: Create Window
     window = webview.create_window(
         title=f"Hostly",
-        url=default_path,
+        # url=default_path,
+        url=web_server.server,
         html=None, # TODO: Create HTML Framework
         js_api=api, # TODO: Add API
         width=1280, # TODO: Asign correct size
         height=720, # TODO: Asign correct size
         resizable=True,
         fullscreen=False,
-        min_size=(960, 680), # TODO: Asign correct size
+        min_size=(1280, 720), # TODO: Asign correct size
         hidden=False,
         frameless=False, # TODO: Change on future
         easy_drag=True,
@@ -72,7 +84,7 @@ def main(
         confirm_close=False,
         background_color='#FFFFFF', # TODO: Asign correct value
         transparent=False,
-        text_select=False,
+        text_select=True,
         localization=None, # TODO: Asign correct value
     )
 
@@ -138,6 +150,17 @@ def init():
     else:
         configuration = Configuration(
             json_data=Configuration.load(config_path).json_data
+        )
+
+    # ================= #
+    #   Credentials     #
+    # ================= #
+
+    credentials = None
+    credentials_path = os.path.expanduser("~/.mscli/config/credentials.json")
+    if os.path.exists(credentials_path):
+        credentials = Credentials(
+            json_data=Credentials.load(credentials_path).json_data
         )
 
     # ================= #
@@ -252,7 +275,8 @@ def init():
         jvm=jvm,
         registry=registry,
         versions=versions,
-        log=log
+        log=log,
+        credentials=credentials
     )
 
 # if __name__ == '__main__':

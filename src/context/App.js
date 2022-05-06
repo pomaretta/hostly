@@ -11,6 +11,18 @@ const AppContext = React.createContext({
     progressBarWidth: 0,
     updateProgressBar: () => {},
 
+    // Registry
+    registryServers: null,
+    getRegistryServers: () => {},
+    registryServer: null,
+    getRegistryServer: () => {},
+
+    // Server
+    serverRun: () => {},
+    serverStop: () => {},
+    serverOutput: () => {},
+    serverCommand: () => {},
+
 });
 
 export default AppContext;
