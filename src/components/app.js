@@ -37,9 +37,11 @@ class Wrapper extends Component {
             routes: this.props.routes,
             currentRoute: 0,
 
-            show: false,
-            pressed: null,
-            data: null,
+            modalShow: false,
+            modalPressed: null,
+            modalData: null,
+
+            error: null,
 
             progressBarWidth: 0,
 
@@ -104,6 +106,18 @@ class Wrapper extends Component {
         })
     }
 
+    sendError(error) {
+        this.setState({
+            error: error
+        });
+    }
+
+    resetError() {
+        this.setState({
+            error: null,
+        });
+    }
+
     async getRegistryServers() {
         const registryServers = await this.api.getRegistryCollection();
         this.setState({
@@ -159,6 +173,18 @@ class Wrapper extends Component {
         return this.api.putServerImport()
     }
 
+    async serverUpdate(id) {
+        return this.api.serverUpdate({
+            id: id,
+        });
+    }
+
+    async serverRemove(id) {
+        return this.api.serverRemove({
+            id: id,
+        });
+    }
+
     render() {
         return <Context.Provider value={{
             
@@ -168,12 +194,16 @@ class Wrapper extends Component {
             currentRoute: this.state.currentRoute,
             setCurrentRoute: this.setCurrentRoute.bind(this),
 
-            show: this.state.show,
-            pressed: this.state.pressed,
-            data: this.state.data,
+            show: this.state.modalShow,
+            pressed: this.state.modalPressed,
+            data: this.state.modalData,
             changeState: this.changeModalState.bind(this),
             createModal: this.createModal.bind(this),
             closeModal: this.closeModal.bind(this),
+
+            error: this.state.error,
+            sendError: this.sendError.bind(this),
+            resetError: this.resetError.bind(this),
 
             progressBarWidth: this.state.progressBarWidth,
             updateProgressBar: this.updateProgressBar.bind(this),
@@ -190,6 +220,8 @@ class Wrapper extends Component {
             serverCommand: this.serverCommand.bind(this),
             serverExport: this.serverExport.bind(this),
             serverImport: this.serverImport.bind(this),
+            serverUpdate: this.serverUpdate.bind(this),
+            serverRemove: this.serverRemove.bind(this),
 
         }}>
             <Router />

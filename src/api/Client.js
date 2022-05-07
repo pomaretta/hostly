@@ -230,6 +230,39 @@ class APIClient {
         return response;
     }
 
+    async serverUpdate({ id}) {
+
+        if (this.env === "DEV") {
+            console.log("Updating server", id);
+            return true;
+        }
+
+        const api = await this.waitForApi();
+        const response = await api.server_update(id);
+        
+        if (!response) {
+            return false;
+        }
+
+        return response;
+    }
+
+    async serverRemove({ id}) {
+
+        if (this.env === "DEV") {
+            console.log("Removing server", id);
+            return true;
+        }
+
+        const api = await this.waitForApi();
+        const response = await api.server_remove(id);
+        if (!response) {
+            return false;
+        }
+
+        return response;
+    }
+
     async waitForApi() {
         return new Promise((resolve, reject) => {
             // If there's already an API, resolve immediately

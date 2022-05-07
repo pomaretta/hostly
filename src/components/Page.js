@@ -5,7 +5,7 @@ import Navbar from "../components/base/Navbar";
 import Sidebar from "../components/base/Sidebar";
 import Modal from "../components/base/Modal";
 import Context from "../context/App";
-
+import Error from "../components/base/Error";
 
 class Page extends Component {
 
@@ -56,6 +56,7 @@ class Page extends Component {
                 </Helmet>
                 <Sidebar overrideRoute={this.state.overrideRoute} />
                 <Modal />
+                <Error />
                 <div className="relative w-full h-full | overflow-scroll | no-scrollbar | flex flex-col justify-start items-start">
                     <Navbar title={this.state.heading} highlight={this.state.highlight} />
                     {this.getContent()}

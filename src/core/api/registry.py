@@ -14,6 +14,7 @@ class RegistryAPI(APIComponent):
         )
 
     def registry_servers(self):
+        self.__update_registry__()
         output = []
         for server in self.registry.__get_registry_objects__():
             output.append(server.to_json())

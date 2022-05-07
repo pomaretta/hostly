@@ -1,6 +1,6 @@
 {
-  "short_name": "JumboTravel",
-  "name": "JumboTravel Portal Platform",
+  "short_name": "Hostly",
+  "name": "Hostly, Manage Minecraft Servers",
   "icons": [
     {
       "src": "favicon.ico",
@@ -8,12 +8,12 @@
       "type": "image/x-icon"
     },
     {
-      "src": "logo128.png",
+      "src": "/icons/logo128.png",
       "type": "image/png",
       "sizes": "128x128"
     },
     {
-      "src": "logo512.png",
+      "src": "/icons/logo512.png",
       "type": "image/png",
       "sizes": "512x512"
     }

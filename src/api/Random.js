@@ -91,7 +91,7 @@ class Random {
             provider: typeOf,
             running: running,
             schema: "sftp",
-            update: "2019-01-01T00:00:00.000Z",
+            update: false,
             version: "1.18",
         })
     }
@@ -170,7 +170,7 @@ class Random {
                 "provider": "vanilla",
                 "running": false,
                 "schema": "sftp",
-                "update": "2019-01-01T00:00:00.000Z",
+                "update": false,
                 "version": "1.18"
             },
             {
@@ -240,7 +240,7 @@ class Random {
                 "provider": "vanilla",
                 "running": false,
                 "schema": "sftp",
-                "update": "2019-01-01T00:00:00.000Z",
+                "update": false,
                 "version": "1.18"
             },
             {
@@ -310,7 +310,7 @@ class Random {
                 "provider": "vanilla",
                 "running": false,
                 "schema": "sftp",
-                "update": "2019-01-01T00:00:00.000Z",
+                "update": true,
                 "version": "1.18"
             }
         ]

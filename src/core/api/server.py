@@ -1,6 +1,7 @@
 import datetime
 import json
 import os
+import shutil
 import threading
 import time
 
@@ -260,8 +261,6 @@ class ServerAPI(APIComponent):
                 **data['object']
             )
 
-        print(registryObject.to_json())
-
         builder = None
         providerName = registryObject.provider
         provider = self.api.versions.get_version(registryObject.version).get_provider(providerName)
@@ -311,5 +310,92 @@ class ServerAPI(APIComponent):
             )
         
         builder.import_server(registry_object=registryObject)
+
+        return True
+
+    def server_update(self, id: str) -> bool:
+
+        if id in self.__processes:
+            raise Exception("Server already running")
+
+        registry_object = self.__get_object__(id)
+
+        builder = None
+        providerName = registry_object.provider
+        provider = self.api.versions.get_version(registry_object.version).get_provider(providerName)
+        if providerName == "forge":
+            builder = ForgeBuilder(
+                configuration=self.api.configuration,
+                credentials=self.api.credentials,
+                registry=self.registry,
+                provider=provider
+            )
+        elif providerName == "vanilla":
+            builder = VanillaBuilder(
+                configuration=self.api.configuration,
+                credentials=self.api.credentials,
+                registry=self.registry,
+                provider=provider
+            )
+        else:
+            raise Exception("Invalid provider")
+
+        version_exists = False
+        for v in self.api.jvm.get_versions():
+            if v.name == provider.jvm:
+                version_exists = True
+                break
+        if not version_exists:
+            raise Exception("Invalid JVM version")
+        
+        jvm_provider: dict = self.api.configuration.get_jvms()['liberica']
+        jvm_provider_path: str = None
+        for n, d in jvm_provider.items():
+            if n == provider.jvm:
+                jvm_provider_path = d['jvm_path']
+                break
+        
+        if jvm_provider_path is None:
+            # Install the JVM
+            jre = MinecraftJVM(
+                configuration=self.api.configuration,
+                jvm=self.api.jvm
+            )
+            jre.install(
+                version=provider.jvm,
+                provider='liberica',
+                dist=self.api.configuration.get_os(),
+                arch=self.api.configuration.get_arch()
+            )
+        
+        failed = builder.update(registry_object=registry_object)
+        if failed:
+            raise Exception("Failed to update server")
+
+        return True
+
+    def server_remove(self, id: str) -> bool:
+
+        if id in self.__processes:
+            raise Exception("Server is running")
+
+        registry_object = self.__get_object__(id)
+        
+        server_path = os.path.join(
+            self.api.configuration.get_paths()["files"],
+            registry_object.provider,
+            registry_object.version,
+            registry_object.id
+        )
+
+        if not os.path.exists(server_path) or not os.path.isdir(server_path) or not os.access(server_path, os.W_OK):
+            raise Exception("Invalid server path")
+        
+        shutil.rmtree(server_path)
+
+        if os.path.exists(server_path) and os.path.isdir(server_path):
+            raise Exception("Failed to remove server")
+
+        self.api.registry.remove(registry_object=registry_object)
 
         return True

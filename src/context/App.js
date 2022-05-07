@@ -15,6 +15,11 @@ const AppContext = React.createContext({
     createModal: () => {},
     closeModal: () => {},
 
+    // Error
+    error: null,
+    sendError: () => {},
+    resetError: () => {},
+
     // ProgressBar
     progressBarWidth: 0,
     updateProgressBar: () => {},
@@ -32,6 +37,8 @@ const AppContext = React.createContext({
     serverCommand: () => {},
     serverExport: () => {},
     serverImport: () => {},
+    serverRemove: () => {},
+    serverUpdate: () => {},
 
 });
 
