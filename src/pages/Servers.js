@@ -54,10 +54,10 @@ function Server(props) {
                             }
                             {
                                 props.data.extra && props.data.extra.properties && props.data.extra.properties.port ?
-                                `:${props.data.extra.properties.port}`
-                                : ":25565"
+                                    `:${props.data.extra.properties.port}`
+                                    : ":25565"
                             }
-                        </span> 
+                        </span>
                         <a
                             className="w-5 h-5 ml-2 text-brand-blue tooltip tooltip-right tooltip-primary"
                             data-tip="Successfully copied to clipboard!"
@@ -97,21 +97,20 @@ function Server(props) {
                         </div>
                     </div>
                 </div>
-                <div className="flex flex-col justify-between items-center | space-y-2">
-                    <button className="uppercase | w-full | text-sm | font-bold | px-4 py-1 | bg-green-500 | rounded-md">
+                {/* <div className="flex flex-col justify-between items-center | space-y-2">
+                    <button className="uppercase | w-full h-full | text-sm | font-bold | px-4 py-1 | bg-green-500 | rounded-md">
                         {
                             props.data.running ? "Running" : "Stopped"
                         }
                     </button>
-                    <button className="btn btn-sm btn-primary | w-full">
+                    <button className="btn btn-sm btn-primary | w-full | z-20">
                         Run
-                        {/* Full Spinner SVG */}
-                        {/* <svg className="animate-spin ml-2 h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <svg className="animate-spin ml-2 h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg> */}
+                        </svg>
                     </button>
-                </div>
+                </div> */}
             </div>
         </a>
     );
@@ -119,7 +118,7 @@ function Server(props) {
 
 function Recently(props) {
     return (
-        <div 
+        <div
             className="h-64 | flex justify-between items-center | space-x-6"
         >
             <div
@@ -192,10 +191,31 @@ function Recently(props) {
 
 class Servers extends Page {
 
-    title = "Servers";
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            ...this.state,
+            interval: null,
+            overrideRoute: 1,
+        };
+
+    }
 
     componentDidMount() {
-        // this.context.getRegistryServers();
+        this.setState({
+            interval: setInterval(() => {
+                this.context.getRegistryServers();
+            }, 10000)
+        })
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.state.interval);
+    }
+
+    async importServer() {
+        await this.context.serverImport();
     }
 
     getContent() {
@@ -206,9 +226,36 @@ class Servers extends Page {
                     <Recently />
 
                     <div className="flex justify-between items-center">
-                        <h4 className="font-bold | text-3xl">
-                            Servers
-                        </h4>
+                        <div className={classNames(
+                            "flex items-center justify-start | space-x-4"
+                        )}>
+                            <h4 className="font-bold | text-3xl">
+                                Servers
+                            </h4>
+                            <button
+                                className={classNames(
+                                    "flex items-center justify-center | px-4 py-2 | text-md | rounded-md | font-bold",
+                                    "bg-gradient-to-tr from-blue-800 to-blue-500 text-white",
+                                    "btn btn-sm capitalize",
+                                    "border-0",
+                                    "hover:shadow-blue-900 hover:shadow-md"
+                                )}
+                            >
+                                Create
+                            </button>
+                            <button
+                                className={classNames(
+                                    "flex items-center justify-center | px-4 py-2 | text-md | rounded-md | font-bold",
+                                    "bg-gradient-to-tr from-orange-800 to-orange-500 text-white",
+                                    "btn btn-sm capitalize",
+                                    "border-0",
+                                    "hover:shadow-orange-900 hover:shadow-md"
+                                )}
+                                onClick={() => this.importServer()}
+                            >
+                                Import
+                            </button>
+                        </div>
                         <div>
                             <button type="button" class="hidden sm:flex items-center w-72 text-left space-x-3 px-4 h-12 bg-white ring-1 ring-slate-900/10 hover:ring-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 shadow-sm rounded-lg text-slate-400 dark:bg-gray-700 dark:ring-0 dark:text-slate-300 dark:highlight-white/5 dark:hover:bg-slate-700"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-none text-slate-300 dark:text-slate-400" aria-hidden="true"><path d="m19 19-3.5-3.5"></path><circle cx="11" cy="11" r="6"></circle></svg><span class="flex-auto">Quick search...</span><kbd class="font-sans font-semibold dark:text-slate-500"><abbr title="Command" class="no-underline text-slate-300 dark:text-slate-500">⌘</abbr> K</kbd></button>
                         </div>
@@ -217,11 +264,11 @@ class Servers extends Page {
                     <div className="w-full | flex flex-col justify-start items-center | space-y-4">
                         {
                             this.context.registryServers && this.context.registryServers.objects.length > 0 ?
-                            (
-                                this.context.registryServers.objects.map((server, index) => {
-                                    return <Server data={server} key={index} />
-                                })
-                            ) : null
+                                (
+                                    this.context.registryServers.objects.map((server, index) => {
+                                        return <Server data={server} key={index} />
+                                    })
+                                ) : null
                         }
                     </div>
 

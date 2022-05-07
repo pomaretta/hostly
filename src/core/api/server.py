@@ -1,7 +1,13 @@
+import datetime
+import json
+import os
 import threading
 import time
+
+import webview
 from ..domain.api import API, APIComponent
 
+from mscli import __version__
 from mscli.core.configuration.registry import RegistryObject, MinecraftRegistry
 from mscli.core.builder.forge import ForgeBuilder
 from mscli.core.builder.vanilla import VanillaBuilder
@@ -203,3 +209,107 @@ class ServerAPI(APIComponent):
         if id not in self.__processes:
             raise Exception("Server not running")
         return self.__processes[id]['stdout']
+
+    def server_export(self, id: str) -> dict:
+        
+        registryObject = self.__get_object__(id)
+        data = {
+            "version": __version__,
+            "schema": registryObject.schema,
+            "creation": datetime.datetime.utcnow().isoformat(),
+            "object": registryObject.to_json()
+        }
+
+        # Get home path
+        home = os.path.expanduser('~')
+        file_path = self.api.get_window().create_file_dialog(webview.SAVE_DIALOG, directory=home, save_filename=f"{id}.json")
+        if file_path is None:
+            raise Exception("No file selected")
+        
+        with open(file_path, 'w') as f:
+            f.write(json.dumps(data))
+            f.close()
+
+        return True
+
+    def server_import(self):
+
+        home = os.path.expanduser('~')
+        file_paths = self.api.get_window().create_file_dialog(webview.OPEN_DIALOG, directory=home)
+        if file_paths is None:
+            raise Exception("No file selected")
+        
+        if len(file_paths) == 0:
+            raise Exception("No file selected")
+
+        file_path = file_paths[0]
+
+        # Check if file exists and is valid
+        if not os.path.isfile(file_path) or not file_path.endswith('.json') or not os.access(file_path, os.R_OK):
+            raise Exception("Invalid file")
+
+        registryObject = None
+        with open(file_path, 'r') as f:
+            data = json.loads(f.read())
+            if "version" not in data or \
+                "schema" not in data or \
+                "creation" not in data or \
+                "object" not in data:
+                raise Exception("Invalid registry file")
+            registryObject = RegistryObject(
+                **data['object']
+            )
+
+        print(registryObject.to_json())
+
+        builder = None
+        providerName = registryObject.provider
+        provider = self.api.versions.get_version(registryObject.version).get_provider(providerName)
+        if providerName == "forge":
+            builder = ForgeBuilder(
+                configuration=self.api.configuration,
+                credentials=self.api.credentials,
+                registry=self.registry,
+                provider=provider
+            )
+        elif providerName == "vanilla":
+            builder = VanillaBuilder(
+                configuration=self.api.configuration,
+                credentials=self.api.credentials,
+                registry=self.registry,
+                provider=provider
+            )
+        else:
+            raise Exception("Invalid provider")
+
+        version_exists = False
+        for v in self.api.jvm.get_versions():
+            if v.name == provider.jvm:
+                version_exists = True
+                break
+        if not version_exists:
+            raise Exception("Invalid JVM version")
+        
+        jvm_provider: dict = self.api.configuration.get_jvms()['liberica']
+        jvm_provider_path: str = None
+        for n, d in jvm_provider.items():
+            if n == provider.jvm:
+                jvm_provider_path = d['jvm_path']
+                break
+        
+        if jvm_provider_path is None:
+            # Install the JVM
+            jre = MinecraftJVM(
+                configuration=self.api.configuration,
+                jvm=self.api.jvm
+            )
+            jre.install(
+                version=provider.jvm,
+                provider='liberica',
+                dist=self.api.configuration.get_os(),
+                arch=self.api.configuration.get_arch()
+            )
+        
+        builder.import_server(registry_object=registryObject)
+
+        return True

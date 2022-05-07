@@ -20,7 +20,48 @@ APP = ['src/hostly.py']
 DATA_FILES = [
     'portal' # ReactJS Application
 ]
-OPTIONS = {}
+OPTIONS = {
+    'argv_emulation': False,
+    'strip': True,
+    'packages': [
+        'asyncio_dgram',
+        'bcrypt',
+        'boto3',
+        'botocore',
+        'certifi',
+        'cffi',
+        'charset_normalizer',
+        'click',
+        'cryptography',
+        'dns',
+        'fabric',
+        'flask',
+        'idna',
+        'importlib_metadata',
+        'invoke',
+        'itsdangerous',
+        'jinja2',
+        'jmespath',
+        'markupsafe',
+        'mcstatus',
+        'mscli',
+        'paramiko',
+        'pathlib2',
+        'proxy_tools',
+        'pycparser',
+        'nacl',
+        'pysftp',
+        'dateutil',
+        'webview',
+        'requests',
+        's3transfer',
+        'six',
+        'urllib3',
+        'werkzeug',
+        'zipp'
+    ],
+    'iconfile': 'public/icons/logo.icns',
+}
 
 setup(
     name='Hostly',

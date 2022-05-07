@@ -15,7 +15,6 @@ import APIClient from "../api/Client";
 // Context
 // ================
 import Context from "../context/App";
-import { RegistryCollection } from "../api/collection/registry";
 
 // Animation
 defineLordIconElement(loadAnimation);
@@ -38,7 +37,10 @@ class Wrapper extends Component {
             routes: this.props.routes,
             currentRoute: 0,
 
-            progressBar: false,
+            show: false,
+            pressed: null,
+            data: null,
+
             progressBarWidth: 0,
 
             registryServers: null,
@@ -54,13 +56,52 @@ class Wrapper extends Component {
         });
     }
 
-    updateProgressBar = (progressBar) => {
-        if (progressBar > 100) {
+    updateProgressBar(progressBar) {
+        if (progressBar > 100 || progressBar < 0) {
             return;
         }
         this.setState({
             progressBarWidth: progressBar,
         });
+    }
+
+    changeModalState({ show, pressed }) {
+        this.setState({
+            modalShow: show,
+            modalPressed: pressed
+        })
+    }
+
+    createModal({ data }) {
+        let promise = new Promise((resolve, reject) => {
+            // Wait for modal to close
+            let interval = setInterval(() => {
+                if (!this.state.modalPressed) {
+                    return;
+                }
+                if (this.state.modalPressed.status === 'completed') {
+                    clearInterval(interval);
+                    resolve(this.state.modalPressed);
+                } else {
+                    clearInterval(interval);
+                    reject(new Error('Modal is not completed'));
+                }
+            }, 500);
+        });
+        data['callback'] = promise;
+        this.setState({
+            modalShow: true,
+            modalData: data
+        })
+        return promise;
+    }
+
+    closeModal() {
+        this.setState({
+            modalShow: false,
+            modalData: null,
+            modalPressed: null
+        })
     }
 
     async getRegistryServers() {
@@ -108,6 +149,16 @@ class Wrapper extends Component {
         });
     }
 
+    async serverExport(id) {
+        return this.api.getServerExport({
+            id: id,
+        })
+    }
+
+    async serverImport() {
+        return this.api.putServerImport()
+    }
+
     render() {
         return <Context.Provider value={{
             
@@ -117,7 +168,13 @@ class Wrapper extends Component {
             currentRoute: this.state.currentRoute,
             setCurrentRoute: this.setCurrentRoute.bind(this),
 
-            progressBar: this.state.progressBar,
+            show: this.state.show,
+            pressed: this.state.pressed,
+            data: this.state.data,
+            changeState: this.changeModalState.bind(this),
+            createModal: this.createModal.bind(this),
+            closeModal: this.closeModal.bind(this),
+
             progressBarWidth: this.state.progressBarWidth,
             updateProgressBar: this.updateProgressBar.bind(this),
 
@@ -131,6 +188,8 @@ class Wrapper extends Component {
             serverStop: this.serverStop.bind(this),
             serverOutput: this.serverOutput.bind(this),
             serverCommand: this.serverCommand.bind(this),
+            serverExport: this.serverExport.bind(this),
+            serverImport: this.serverImport.bind(this),
 
         }}>
             <Router />

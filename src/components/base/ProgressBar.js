@@ -8,7 +8,7 @@ class ProgressBar extends Component {
     render() {
         return (
             <div className={classNames(
-                this.context.progressBar ? '' : 'hidden',
+                this.context.progressBarWidth > 0 ? '' : 'hidden',
                 "w-full h-2 absolute bottom-0 left-0 z-10"
             )}>
                 <div className="h-full bg-primary" style={{

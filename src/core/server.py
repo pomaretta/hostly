@@ -25,7 +25,8 @@ class WebServer:
         
         if os.path.exists(darwin_path):
             self.default_path = darwin_path
-        
+
+        self.default_path = os.path.abspath(self.default_path)
         self.default_static = os.path.join(
             self.default_path,
             'static',

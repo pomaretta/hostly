@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet";
 import ProgressBar from "./base/ProgressBar";
 import Navbar from "../components/base/Navbar";
 import Sidebar from "../components/base/Sidebar";
+import Modal from "../components/base/Modal";
 import Context from "../context/App";
 
 
@@ -54,6 +55,7 @@ class Page extends Component {
                     <title>{this.state.title}</title>
                 </Helmet>
                 <Sidebar overrideRoute={this.state.overrideRoute} />
+                <Modal />
                 <div className="relative w-full h-full | overflow-scroll | no-scrollbar | flex flex-col justify-start items-start">
                     <Navbar title={this.state.heading} highlight={this.state.highlight} />
                     {this.getContent()}

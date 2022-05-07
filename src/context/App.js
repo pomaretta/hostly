@@ -7,7 +7,15 @@ const AppContext = React.createContext({
     currentRoute: 0,
     setCurrentRoute: () => {},
 
-    progressBar: false,
+    // Modal
+    show: false,
+    pressed: null,
+    data: null,
+    changeState: () => {},
+    createModal: () => {},
+    closeModal: () => {},
+
+    // ProgressBar
     progressBarWidth: 0,
     updateProgressBar: () => {},
 
@@ -22,6 +30,8 @@ const AppContext = React.createContext({
     serverStop: () => {},
     serverOutput: () => {},
     serverCommand: () => {},
+    serverExport: () => {},
+    serverImport: () => {},
 
 });
 

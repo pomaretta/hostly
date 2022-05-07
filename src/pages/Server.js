@@ -260,7 +260,7 @@ class Server extends Page {
     }
 
     async initServer() {
-        
+
         // Not running locally.
         if (this.state.server.running && !this.state.server.pid || this.state.serverLoading) return;
 
@@ -270,6 +270,8 @@ class Server extends Page {
             serverSuccess: false,
             serverError: null,
         });
+
+        this.context.updateProgressBar(10);
 
         let currentState = this.state.server.running;
 
@@ -282,6 +284,9 @@ class Server extends Page {
         }
 
         let inter = setInterval(async () => {
+
+            this.context.updateProgressBar(this.context.progressBarWidth + 1);
+
             // Wait until server change state.
             if (currentState !== this.context.registryServer.running) {
                 clearInterval(inter);
@@ -300,15 +305,23 @@ class Server extends Page {
                     consoleIsOpen: consoleIsOpen,
                 })
 
+                this.context.updateProgressBar(100);
+
                 setTimeout(() => {
                     this.setState({
                         serverCompleted: false,
                         serverSuccess: false,
                         serverError: null,
                     });
+                    this.context.updateProgressBar(0);
                 }, 2000);
             }
         }, 1000);
+    }
+
+    async exportServer() {
+        // Obtain server data
+        await this.context.serverExport(this.props.router.params.id);
     }
 
     processConsoleOutput() {
@@ -322,6 +335,22 @@ class Server extends Page {
         });
 
         return out;
+    }
+
+    async sendCommand() {
+        
+        let command = this.state.command;
+        if (!command || command === "" || this.state.serverLoading || this.state.server && !this.state.server.running) return;
+
+        // If command is stop, stop server.
+        if (String(command).toLowerCase() === "stop" || String(command).toLowerCase() === "quit") {
+            this.changeConsoleCommand("");
+            this.initServer();
+            return;
+        }
+
+        this.changeConsoleCommand("");
+        this.context.serverCommand(this.props.router.params.id, command);
     }
 
     changeConsoleCommand(command) {
@@ -408,7 +437,7 @@ class Server extends Page {
                                                                 <path fill="currentColor" d="M11,15H13V17H11V15M11,7H13V13H11V7M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20Z" />
                                                             </svg>
                                                         )
-                                            ) : null
+                                                ) : null
                                     }
                                 </button>
                             </div>
@@ -453,15 +482,10 @@ class Server extends Page {
                                         this.changeConsoleCommand(e.target.value);
                                     }}
                                     onKeyDown={(e) => {
-                                        let command = this.state.command;
-                                        if (!command || command === "") {
-                                            return;
-                                        }
                                         if (e.key !== "Enter") {
                                             return;
                                         }
-                                        this.changeConsoleCommand("");
-                                        this.context.serverCommand(this.props.router.params.id, command);
+                                        this.sendCommand();
                                     }}
                                 />
                                 <button
@@ -469,14 +493,7 @@ class Server extends Page {
                                         this.state.consoleIsOpen ? "" : "hidden",
                                         "flex justify-end items-center | p-2 px-4 | bg-graii | rounded-lg | h-full | text-white | bg-gradient-to-tr from-blue-800 to-blue-500 | font-bold"
                                     )}
-                                    onClick={() => {
-                                        let command = this.state.command;
-                                        if (!command || command === "") {
-                                            return;
-                                        }
-                                        this.changeConsoleCommand("");
-                                        this.context.serverCommand(this.props.router.params.id, command);
-                                    }}
+                                    onClick={() => this.sendCommand()}
                                 >
                                     Send
                                     <svg className="ml-3 w-5 h-5" viewBox="0 0 24 24">
@@ -516,7 +533,10 @@ class Server extends Page {
                                     </a>
                                 </li>
                                 <li className="w-full">
-                                    <a className="flex items-center justify-between text-lg | px-4 py-2 | dark:bg-gray-600 bg-gray-100 dark:text-white | text-brand-blue | w-full | rounded-lg | font-bold">
+                                    <a
+                                        className="flex items-center justify-between text-lg | px-4 py-2 | dark:bg-gray-600 bg-gray-100 dark:text-white | text-brand-blue | w-full | rounded-lg | font-bold"
+                                        onClick={() => this.exportServer()}
+                                    >
                                         <svg className="w-6 h-6" viewBox="0 0 24 24">
                                             <path fill="currentColor" d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z" />
                                         </svg>
