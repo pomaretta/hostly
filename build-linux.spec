@@ -1,0 +1,70 @@
+# -*- mode: python -*-
+
+block_cipher = None
+
+added_files = [
+    ('./portal', 'portal'),
+]
+
+a = Analysis(['./src/hostly.py'],
+             pathex=['./dist'],
+             binaries=None,
+             datas=added_files,
+             hiddenimports=[
+                'asyncio_dgram',
+                'bcrypt',
+                'boto3',
+                'botocore',
+                'certifi',
+                'cffi',
+                'charset_normalizer',
+                'click',
+                'cryptography',
+                'dns',
+                'fabric',
+                'flask',
+                'idna',
+                'importlib_metadata',
+                'invoke',
+                'itsdangerous',
+                'jinja2',
+                'jmespath',
+                'markupsafe',
+                'mcstatus',
+                'mscli',
+                'paramiko',
+                'pathlib2',
+                'proxy_tools',
+                'pycparser',
+                'nacl',
+                'pysftp',
+                'dateutil',
+                'webview',
+                'requests',
+                's3transfer',
+                'six',
+                'urllib3',
+                'werkzeug',
+                'zipp'
+             ],
+             excludes=[],
+             win_no_prefer_redirects=False,
+             win_private_assemblies=False,
+             cipher=block_cipher)
+pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
+exe = EXE(pyz,
+          a.scripts,
+          exclude_binaries=True,
+          name='Hostly',
+          debug=False,
+          strip=True,
+          icon='./public/icons/logo.ico',
+          upx=True,
+          console=False) # set this to see error output of the executable
+coll = COLLECT(exe,
+               a.binaries,
+               a.zipfiles,
+               a.datas,
+               strip=False,
+               upx=False,
+               name='Hostly')
