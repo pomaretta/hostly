@@ -1,4 +1,3 @@
-import Dashboard from '../pages/Dashboard';
 import Servers from '../pages/Servers';
 import Server from '../pages/Server';
 

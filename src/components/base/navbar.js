@@ -1,11 +1,6 @@
 import React from 'react'
 import { Disclosure } from '@headlessui/react'
-import { MenuIcon, XIcon } from '@heroicons/react/outline'
-
-import { Link } from 'react-router-dom';
 import Context from '../../context/App';
-
-import { classNames } from '../../utils/Utils';
 
 class Navbar extends React.Component {
 
@@ -55,7 +50,7 @@ class Navbar extends React.Component {
 									<div className="dropdown dropdown-end">
 										<label tabindex="0" className="btn btn-ghost btn-circle avatar | ring-2 ring-blue-300 ring-inset">
 											<div className="w-10 rounded-full">
-												<img src="/images/steve.jpeg" />
+												<img src="/images/steve.jpeg" alt='Profile picture' />
 											</div>
 										</label>
 										<ul tabindex="0" className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 | dark:bg-black dark:border-2 dark:border-blue-500">

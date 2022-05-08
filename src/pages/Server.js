@@ -320,7 +320,7 @@ class Server extends Page {
     async initServer() {
 
         // Not running locally.
-        if (this.state.server.running && !this.state.server.pid || this.state.serverLoading) return;
+        if (this.state.server.running && (!this.state.server.pid || this.state.serverLoading)) return;
 
         this.setState({
             serverLoading: true,
@@ -384,7 +384,7 @@ class Server extends Page {
 
     processConsoleOutput() {
 
-        if (!this.state.consoleOutput || this.state.consoleOutput.length == 0) return;
+        if (!this.state.consoleOutput || this.state.consoleOutput.length === 0) return;
 
         let output = this.state.consoleOutput;
 
@@ -398,7 +398,7 @@ class Server extends Page {
     async sendCommand() {
 
         let command = this.state.command;
-        if (!command || command === "" || this.state.serverLoading || this.state.server && !this.state.server.running) return;
+        if (!command || command === "" || this.state.serverLoading || (this.state.server && !this.state.server.running)) return;
 
         // If command is stop, stop server.
         if (String(command).toLowerCase() === "stop" || String(command).toLowerCase() === "quit") {

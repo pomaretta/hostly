@@ -33,11 +33,7 @@ class APIClient {
     async getRegistryServerData({ id }) {
 
         if (this.env === "DEV") {
-            return Random.getRegistryObjects(3).find(object => {
-                if (object.id === id) {
-                    return object;
-                }
-            });
+            return Random.getRegistryObjects(3).find(o => o.id === id);
         }
 
         const api = await this.waitForApi();

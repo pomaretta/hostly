@@ -10,9 +10,6 @@
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^0.26.1",
-    "daisyui": "^2.14.1",
-    "lord-icon-element": "^3.3.3",
-    "lottie-web": "^5.9.1",
     "prop-types": "^15.8.1",
     "react": "^17.0.2",
     "react-cookie": "^4.1.1",
@@ -21,7 +18,6 @@
     "react-router-dom": "^6.2.2",
     "react-scripts": "5.0.0",
     "recharts": "^2.1.9",
-    "sass": "^1.49.9",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -55,6 +51,10 @@
     "autoprefixer": "^10.4.4",
     "postcss": "^8.4.12",
     "tailwindcss": "^3.0.23",
-    "tailwindcss-animate": "^1.0.5"
+    "tailwindcss-animate": "^1.0.5",
+    "daisyui": "^2.14.1",
+    "lord-icon-element": "^3.3.3",
+    "lottie-web": "^5.9.1",
+    "sass": "^1.49.9"
   }
 }
