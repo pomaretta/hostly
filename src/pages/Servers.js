@@ -383,6 +383,15 @@ class Servers extends Page {
 
     }
 
+    async createServer() {
+        let serverDetails = await this.context.createModal({
+            data: {
+                type: "servercreator"
+            }
+        });
+        if (!serverDetails) return;
+    }
+
     getContent() {
         return (
             <div className="flex flex-col w-full">
@@ -405,7 +414,7 @@ class Servers extends Page {
                                     "border-0",
                                     "hover:shadow-blue-900 hover:shadow-md"
                                 )}
-                                onClick={() => this.context.sendError("Not implemented")}
+                                onClick={() => this.createServer()}
                             >
                                 Create
                             </button>

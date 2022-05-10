@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import { Helmet } from "react-helmet";
 import ProgressBar from "./base/ProgressBar";
 import Navbar from "../components/base/Navbar";
-import Sidebar from "../components/base/Sidebar";
-import Modal from "../components/base/Modal";
+import Sidebar from "./base/Sidebar";
+import Modal from "./base/Modal";
 import Context from "../context/App";
 import Error from "../components/base/Error";
 

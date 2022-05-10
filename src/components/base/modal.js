@@ -62,6 +62,193 @@ function ActionDelete(props) {
     )
 }
 
+class ServerCreator extends Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            currentStep: 0,
+            serverType: "",
+        }
+
+    }
+
+    versionStep() {
+        return (
+            <div className="flex flex-col justify-between items-center | h-full w-full">
+                <div className='w-full h-full | form-control | p-4'>
+
+                    <div class="input-group">
+                        <select class="select select-bordered">
+                            <option disabled selected>Pick category</option>
+                            <option>T-shirts</option>
+                            <option>Mugs</option>
+                        </select> 
+                    </div>
+
+                </div>
+                <div className='w-full h-20 | flex justify-between items-center | px-4'>
+                    <div className='h-full'>
+                    </div>
+                    <div className='h-full | flex items-center justify-end | space-x-4'>
+                        <button
+                            className={classNames(
+                                "flex items-center justify-center | px-4 py-2 | text-md | rounded-md | font-bold",
+                                "bg-gradient-to-tr from-blue-800 to-blue-500 text-white",
+                                "btn btn-sm capitalize",
+                                "border-0",
+                                "hover:shadow-blue-900",
+                                "px-4"
+                            )}
+                        >
+                            Next Step
+                        </button>
+                        <button
+                            className={classNames(
+                                "flex items-center justify-center | px-4 py-2 | text-md | rounded-md | font-bold",
+                                "bg-gradient-to-tr from-red-800 to-red-500 text-white",
+                                "btn btn-sm capitalize",
+                                "border-0",
+                                "hover:shadow-red-900",
+                                "px-4"
+                            )}
+                            onClick={() => {
+                                this.context.changeState({
+                                    show: false,
+                                    pressed: {
+                                        status: "rejected",
+                                    }
+                                })
+                            }}
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    modsStep() {
+        return (
+            <div className="flex flex-col items-center">
+                <h3>Mods Step</h3>
+            </div>
+        )
+    }
+
+    propertiesStep() {
+        return (
+            <div className="flex flex-col items-center">
+                <h3>Properties Step</h3>
+            </div>
+        )
+    }
+
+    iconStep() {
+        return (
+            <div className="flex flex-col items-center">
+                <h3>Icon Step</h3>
+            </div>
+        )
+    }
+
+    worldStep() {
+        return (
+            <div className="flex flex-col items-center">
+                <h3>World Step</h3>
+            </div>
+        )
+    }
+
+    getSteps() {
+        let steps = [
+            "Version",
+            this.state.serverType === "forge" ? "Mods" : null,
+            "Properties",
+            "Icon",
+            "World",
+        ];
+        // Remove null steps
+        steps = steps.filter(step => step);
+        return steps;
+    }
+
+    getStepContent(step) {
+        switch (step) {
+            case 0:
+                return this.versionStep();
+            case 1: case 2:
+                if (this.state.serverType === "forge" && step === 1) {
+                    return this.modsStep();
+                } else {
+                    return this.propertiesStep();
+                }
+            case 3:
+                return this.iconStep();
+            case 4:
+                return this.worldStep();
+            default:
+                return "Unknown step";
+        }
+    }
+
+    render() {
+        return (
+            <div className='w-full h-full | flex justify-center items-center'>
+                <div className={classNames(
+                    'w-2/3 h-2/3 | bg-white dark:bg-gray-700 | z-20 | rounded-lg | shadow-lg',
+                    'flex flex-col justify-start items-center'
+                )}>
+                    <div className='relative w-full h-28 | px-4 py-2 | flex items-center justify-center'>
+                        <ul class="steps">
+                            {
+                                this.getSteps().map((step, index) => {
+
+                                    if (step === null) {
+                                        return null;
+                                    }
+
+                                    return <li class={classNames(
+                                        "step",
+                                        this.state.currentStep === index || this.state.currentStep > index ? "step-primary" : null,
+                                    )}>{step}</li>
+                                })
+                            }
+                        </ul>
+                        <div className={classNames(
+                            'absolute | h-full w-24 | top-0 right-0',
+                            'flex items-center justify-center'
+                        )}>
+                            <button type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 bg-gray-100 dark:bg-gray-900 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white" data-modal-toggle="popup-modal"
+                                onClick={() => {
+                                    this.props.changeState({
+                                        show: false,
+                                        pressed: {
+                                            status: "rejected",
+                                            proceed: false,
+                                        }
+                                    })
+                                }}
+                            >
+                                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div className='w-full h-full'>
+                        {
+                            this.getStepContent(this.state.currentStep)
+                        }
+                    </div>
+                </div>
+
+            </div>
+        )
+    }
+}
+ServerCreator.contextType = Context;
+
 class Modal extends Component {
 
     getModal() {
@@ -73,6 +260,8 @@ class Modal extends Component {
             //     return <ActionPlaceOrder data={this.context.data} changeState={this.context.changeState} />
             case "actiondelete":
                 return <ActionDelete data={this.context.data} changeState={this.context.changeState} />;
+            case "servercreator":
+                return <ServerCreator data={this.context.data} changeState={this.context.changeState} />;
             default:
                 return null;
         }

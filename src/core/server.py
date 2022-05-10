@@ -22,9 +22,15 @@ class WebServer:
             'Resources',
             'portal',
         )
+        linux_path = os.path.join(
+            '.',
+            'portal',
+        )
         
         if os.path.exists(darwin_path):
             self.default_path = darwin_path
+        elif os.path.exists(linux_path):
+            self.default_path = linux_path
 
         self.default_path = os.path.abspath(self.default_path)
         self.default_static = os.path.join(

@@ -11,6 +11,7 @@ a = Analysis(['./src/hostly.py'],
              binaries=None,
              datas=added_files,
              hiddenimports=[
+                'gi',
                 'asyncio_dgram',
                 'bcrypt',
                 'boto3',
