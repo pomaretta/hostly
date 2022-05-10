@@ -96,8 +96,7 @@ def main(
         args=None,
         localization={},
         gui=None,
-        # debug=log.get_logger().level == logging.DEBUG,
-        debug=True,
+        debug=log.get_logger().level == logging.DEBUG,
         http_server=True,
         user_agent=None
     )
