@@ -4,12 +4,16 @@ from ..domain.log import Log
 # TODO: Import modules
 from .registry import RegistryAPI
 from .server import ServerAPI
+from .version import VersionAPI
+from .file import FileAPI
 
 class WebAPI(API):
 
     _modules = [
         RegistryAPI,
-        ServerAPI
+        ServerAPI,
+        VersionAPI,
+        FileAPI,
     ]
 
     def __init__(self, configuration: Configuration, jvm: JVMConfiguration, registry: Registry, versions: Versions, log: Log, credentials: Credentials) -> None:

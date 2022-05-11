@@ -13,6 +13,9 @@ function Server(props) {
         case "forge":
             providerImage = "/images/forge.jpeg"
             break;
+        case "spigot":
+            providerImage = "/images/spigot.png"
+            break;
         default:
             providerImage = "/images/vanilla.png"
             break;
@@ -259,7 +262,8 @@ class Recently extends React.Component {
                     className={classNames(
                         "w-2/6 h-full | flex justify-between items-center | bg-white shadow-md rounded-md | dark:bg-gray-800 | hover:shadow-2xl dark:hover:shadow-blue-800 hover:shadow-blue-300",
                         "flex flex-col items-center justify-center",
-                        "rounded-lg overflow-hidden"
+                        "rounded-lg overflow-hidden",
+                        "no-scrollbar"
                     )}
                     style={{
                         transition: "all 0.5s ease-in-out",

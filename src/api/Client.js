@@ -1,4 +1,6 @@
+import { bool } from "prop-types";
 import { RegistryCollection } from "./collection/registry";
+import { VersionCollection } from './collection/versions';
 import Random from "./Random";
 
 class APIClient {
@@ -257,6 +259,54 @@ class APIClient {
         }
 
         return response;
+    }
+
+    async availableVersions() {
+        if (this.env === "DEV") {
+            console.log("Getting available versions");
+            return VersionCollection.parse(
+                [
+                    {
+                        "name": "1.18",
+                        "providers": [
+                            "vanilla",
+                            "spigot",
+                            "forge"
+                        ],
+                        "type": "release"
+                    },
+                    {
+                        "name": "1.17",
+                        "providers": [
+                            "vanilla",
+                            "forge"
+                        ],
+                        "type": "release"
+                    },
+                ]
+            )
+        }
+        const api = await this.waitForApi();
+        const response = await api.versions_available();
+        if (!response) {
+            return new VersionCollection([]);
+        }
+        return VersionCollection.parse(response);
+    }
+
+    async getLocalPath({
+        directory
+    }) {
+        if (!directory instanceof bool) throw new Error("directory must be a boolean");
+        if (this.env === "DEV") {
+            console.log("Getting local path", directory);
+            // Return a promise
+            return new Promise((resolve, reject) => {
+                resolve("/path/to/file");
+            });
+        }
+        const api = await this.waitForApi();
+        return api.file_path(directory);
     }
 
     async waitForApi() {

@@ -48,6 +48,7 @@ class Wrapper extends Component {
             registryServers: null,
             registryServer: null,
 
+            availableVersions: null,
         };
 
     }
@@ -118,6 +119,10 @@ class Wrapper extends Component {
         });
     }
 
+    async getLocalPath(directory) {
+        return this.api.getLocalPath(directory);
+    }
+
     async getRegistryServers() {
         const registryServers = await this.api.getRegistryCollection();
         this.setState({
@@ -185,6 +190,13 @@ class Wrapper extends Component {
         });
     }
 
+    async getAvailableVersions() {
+        const versions = await this.api.availableVersions();
+        this.setState({
+            availableVersions: versions,
+        });
+    }
+
     render() {
         return <Context.Provider value={{
             
@@ -200,6 +212,8 @@ class Wrapper extends Component {
             changeState: this.changeModalState.bind(this),
             createModal: this.createModal.bind(this),
             closeModal: this.closeModal.bind(this),
+
+            getLocalPath: this.getLocalPath.bind(this),
 
             error: this.state.error,
             sendError: this.sendError.bind(this),
@@ -223,6 +237,8 @@ class Wrapper extends Component {
             serverUpdate: this.serverUpdate.bind(this),
             serverRemove: this.serverRemove.bind(this),
 
+            availableVersions: this.state.availableVersions,
+            getAvailableVersions: this.getAvailableVersions.bind(this),
         }}>
             <Router />
         </Context.Provider>;

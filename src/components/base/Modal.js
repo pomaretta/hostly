@@ -69,24 +69,175 @@ class ServerCreator extends Component {
 
         this.state = {
             currentStep: 0,
-            serverType: "",
+
+            serverType: null,
+            serverVersion: null,
+
+            propertiesPath: "",
+            iconPath: "",
+            worldPath: "",
+            modsPath: "",
+
         }
 
+    }
+
+    componentDidMount() {
+        this.context.getAvailableVersions();
+    }
+
+    vanillaFeatures() {
+        return (
+            <div className='w-full h-full | flex flex-col items-center justify-start | p-4 | space-y-4'>
+                <p className='text-xl'>
+                    - Base server
+                </p>
+                <p className='text-xl'>
+                    - Client don't need to install anything
+                </p>
+            </div>
+        );
+    }
+
+    forgeFeatures() {
+        return (
+            <div className='w-full h-full | flex flex-col items-center justify-start | p-4 | space-y-4'>
+                <p className='text-xl'>
+                    - Vanilla Features
+                </p>
+                <p className='text-xl'>
+                    - Forge Mods
+                </p>
+                <p className='text-xl'>
+                    - Client needs to install mods locally
+                </p>
+            </div>
+        );
+    }
+
+    spigotFeatures() {
+        return (
+            <div className='w-full h-full | flex flex-col items-center justify-start | p-4 | space-y-4'>
+                <p className='text-xl'>
+                    - Vanilla Features
+                </p>
+                <p className='text-xl'>
+                    - CraftBukkit Plugins
+                </p>
+                <p className='text-xl'>
+                    - Optimized server, fast and stable
+                </p>
+            </div>
+        );
+    }
+
+    renderServerCard() {
+        switch (this.state.serverType) {
+            case "vanilla":
+                return this.vanillaFeatures();
+            case "forge":
+                return this.forgeFeatures();
+            case "spigot":
+                return this.spigotFeatures();
+            default:
+                return null;
+        }
+    }
+
+    renderServerImage() {
+        switch (this.state.serverType) {
+            case "vanilla":
+                return "/images/vanilla.png";
+            case "forge":
+                return "/images/forge.jpeg";
+            case "spigot":
+                return "/images/spigot.png";
+            default:
+                return null;
+        }
     }
 
     versionStep() {
         return (
             <div className="flex flex-col justify-between items-center | h-full w-full">
-                <div className='w-full h-full | form-control | p-4'>
-
-                    <div class="input-group">
-                        <select class="select select-bordered">
-                            <option disabled selected>Pick category</option>
-                            <option>T-shirts</option>
-                            <option>Mugs</option>
-                        </select> 
+                <div className='w-full h-full | px-4 | flex items-center justify-between | space-x-4'>
+                    <div className='w-1/3 h-full | flex flex-col items-center justify-start | space-y-4 | p-4'>
+                        <h3 className='text-2xl | font-bold'>
+                            Provider
+                        </h3>
+                        <div class="input-group | flex items-center justify-center">
+                            <select
+                                class="select | bg-gray-100 dark:bg-gray-800"
+                                onChange={(e) => {
+                                    this.setState({
+                                        serverType: String(e.target.value).toLowerCase(),
+                                        serverVersion: null,
+                                    });
+                                }}
+                                defaultValue={this.state.serverType}
+                            >
+                                <option disabled
+                                    selected={this.state.serverType === null}
+                                >Select provider</option>
+                                {
+                                    this.context.availableVersions ?
+                                        this.context.availableVersions.getProviders().map((provider) => {
+                                            return <option value={provider}>{
+                                                String(provider).charAt(0).toUpperCase() + String(provider).slice(1)
+                                            }</option>
+                                        }) : null
+                                }
+                            </select>
+                        </div>
+                        <h3 className='text-2xl | font-bold'>
+                            Version
+                        </h3>
+                        <div class="input-group | flex items-center justify-center">
+                            <select class="select | bg-gray-100 dark:bg-gray-800"
+                                onChange={(e) => {
+                                    this.setState({
+                                        serverVersion: String(e.target.value),
+                                    });
+                                }}
+                                defaultValue={this.state.serverVersion}
+                            >
+                                <option disabled
+                                    selected={this.state.serverVersion === null}
+                                >Select version</option>
+                                {
+                                    this.context.availableVersions && this.state.serverType !== null ?
+                                        this.context.availableVersions.getProviderVersions(this.state.serverType).map((version) => {
+                                            return <option value={version}>{
+                                                version
+                                            }</option>
+                                        }) : null
+                                }
+                            </select>
+                        </div>
                     </div>
-
+                    <div className='w-2/3 h-full | p-4'>
+                        {
+                            this.state.serverType ?
+                                (
+                                    <div className='w-full h-full | bg-transparent | rounded-lg | border-2 border-gray-200 | flex flex-col items-center justify-between'>
+                                        <div className='w-full h-20 | flex items-center justify-start | p-4 | space-x-6 | border-b-2'>
+                                            <img className='w-auto h-full | rounded-lg' src={this.renderServerImage()} alt="Server Type Image" />
+                                            <h4 className='text-2xl | font-bold'>
+                                                {
+                                                    this.state.serverType.charAt(0).toUpperCase() + this.state.serverType.slice(1)
+                                                }
+                                                <span className='ml-2'>
+                                                    Server
+                                                </span>
+                                            </h4>
+                                        </div>
+                                        {
+                                            this.renderServerCard()
+                                        }
+                                    </div>
+                                ) : null
+                        }
+                    </div>
                 </div>
                 <div className='w-full h-20 | flex justify-between items-center | px-4'>
                     <div className='h-full'>
@@ -101,6 +252,15 @@ class ServerCreator extends Component {
                                 "hover:shadow-blue-900",
                                 "px-4"
                             )}
+                            onClick={() => {
+                                if (this.state.serverType == "" || this.state.serverVersion == null) {
+                                    this.context.sendError("Please select a server type and version");
+                                    return;
+                                }
+                                this.setState({
+                                    currentStep: this.state.currentStep + 1,
+                                })
+                            }}
                         >
                             Next Step
                         </button>
@@ -132,32 +292,436 @@ class ServerCreator extends Component {
 
     modsStep() {
         return (
-            <div className="flex flex-col items-center">
-                <h3>Mods Step</h3>
+            <div className="flex flex-col justify-between items-center | h-full w-full">
+                <div className='w-full h-full | px-4 | flex flex-col items-center justify-center | space-y-4'>
+                    <div class="flex flex-col justify-center items-center space-y-4">
+                        <p className="form-label inline-block mb-2 dark:text-white text-gray-700">Icon Image (Optional)</p>
+                        <button
+                            className={classNames(
+                                "flex items-center justify-center | px-4 py-2 | text-md | rounded-md | font-bold",
+                                "bg-gray-200 dark:bg-gray-800"
+                            )}
+                            onClick={() => {
+                                this.context.getLocalPath({
+                                    directory: false
+                                }).then(r => {
+                                    this.setState({
+                                        modsPath: r,
+                                    });
+                                });
+                            }}
+                        >
+                            Select mods file
+                            {
+                                this.state.modsPath ?
+                                    (
+                                        <svg className="inline ml-3 w-4 h-4 text-green-500 dark:text-green-400" viewBox="0 0 24 24">
+                                            <path fill="currentColor" d="M20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4C12.76,4 13.5,4.11 14.2,4.31L15.77,2.74C14.61,2.26 13.34,2 12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12M7.91,10.08L6.5,11.5L11,16L21,6L19.59,4.58L11,13.17L7.91,10.08Z" />
+                                        </svg>
+                                    ) : null
+                            }
+                        </button>
+                    </div>
+                </div>
+                <div className='w-full h-20 | flex justify-between items-center | px-4'>
+                    <div className='h-full'>
+                    </div>
+                    <div className='h-full | flex items-center justify-end | space-x-4'>
+                        <button
+                            className={classNames(
+                                "flex items-center justify-center | px-4 py-2 | text-md | rounded-md | font-bold",
+                                "bg-gradient-to-tr from-blue-800 to-blue-500 text-white",
+                                "btn btn-sm capitalize",
+                                "border-0",
+                                "hover:shadow-blue-900",
+                                "px-4"
+                            )}
+                            onClick={() => {
+                                this.setState({
+                                    currentStep: this.state.currentStep + 1,
+                                })
+                            }}
+                        >
+                            Next Step
+                        </button>
+                        <button
+                            className={classNames(
+                                "flex items-center justify-center | px-4 py-2 | text-md | rounded-md | font-bold",
+                                "bg-gradient-to-tr from-red-800 to-red-500 text-white",
+                                "btn btn-sm capitalize",
+                                "border-0",
+                                "hover:shadow-red-900",
+                                "px-4"
+                            )}
+                            onClick={() => {
+                                this.context.changeState({
+                                    show: false,
+                                    pressed: {
+                                        status: "rejected",
+                                    }
+                                })
+                            }}
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
             </div>
         )
     }
 
     propertiesStep() {
         return (
-            <div className="flex flex-col items-center">
-                <h3>Properties Step</h3>
+            <div className="flex flex-col justify-between items-center | h-full w-full">
+                <div className='w-full h-full | px-4 | flex flex-col items-center justify-center | space-y-4'>
+                    <div class="flex flex-col justify-center items-center space-y-4">
+                        <p className="form-label inline-block mb-2 dark:text-white text-gray-700">Properties File (Optional)</p>
+                        <button
+                            className={classNames(
+                                "flex items-center justify-center | px-4 py-2 | text-md | rounded-md | font-bold",
+                                "bg-gray-200 dark:bg-gray-800"
+                            )}
+                            onClick={() => {
+                                this.context.getLocalPath({
+                                    directory: false
+                                }).then(r => {
+                                    this.setState({
+                                        propertiesPath: r,
+                                    });
+                                });
+                            }}
+                        >
+                            Select file
+                            {
+                                this.state.propertiesPath ?
+                                    (
+                                        <svg className="inline ml-3 w-4 h-4 text-green-500 dark:text-green-400" viewBox="0 0 24 24">
+                                            <path fill="currentColor" d="M20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4C12.76,4 13.5,4.11 14.2,4.31L15.77,2.74C14.61,2.26 13.34,2 12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12M7.91,10.08L6.5,11.5L11,16L21,6L19.59,4.58L11,13.17L7.91,10.08Z" />
+                                        </svg>
+                                    ) : null
+                            }
+                        </button>
+                    </div>
+                </div>
+                <div className='w-full h-20 | flex justify-between items-center | px-4'>
+                    <div className='h-full'>
+                    </div>
+                    <div className='h-full | flex items-center justify-end | space-x-4'>
+                        <button
+                            className={classNames(
+                                "flex items-center justify-center | px-4 py-2 | text-md | rounded-md | font-bold",
+                                "bg-gradient-to-tr from-blue-800 to-blue-500 text-white",
+                                "btn btn-sm capitalize",
+                                "border-0",
+                                "hover:shadow-blue-900",
+                                "px-4"
+                            )}
+                            onClick={() => {
+                                this.setState({
+                                    currentStep: this.state.currentStep + 1,
+                                })
+                            }}
+                        >
+                            Next Step
+                        </button>
+                        <button
+                            className={classNames(
+                                "flex items-center justify-center | px-4 py-2 | text-md | rounded-md | font-bold",
+                                "bg-gradient-to-tr from-red-800 to-red-500 text-white",
+                                "btn btn-sm capitalize",
+                                "border-0",
+                                "hover:shadow-red-900",
+                                "px-4"
+                            )}
+                            onClick={() => {
+                                this.context.changeState({
+                                    show: false,
+                                    pressed: {
+                                        status: "rejected",
+                                    }
+                                })
+                            }}
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
             </div>
         )
     }
 
     iconStep() {
         return (
-            <div className="flex flex-col items-center">
-                <h3>Icon Step</h3>
+            <div className="flex flex-col justify-between items-center | h-full w-full">
+                <div className='w-full h-full | px-4 | flex flex-col items-center justify-center | space-y-4'>
+                    <div class="flex flex-col justify-center items-center space-y-4">
+                        <p className="form-label inline-block mb-2 dark:text-white text-gray-700">Icon Image (Optional)</p>
+                        <button
+                            className={classNames(
+                                "flex items-center justify-center | px-4 py-2 | text-md | rounded-md | font-bold",
+                                "bg-gray-200 dark:bg-gray-800"
+                            )}
+                            onClick={() => {
+                                this.context.getLocalPath({
+                                    directory: false
+                                }).then(r => {
+                                    this.setState({
+                                        iconPath: r,
+                                    });
+                                });
+                            }}
+                        >
+                            Select icon
+                            {
+                                this.state.iconPath ?
+                                    (
+                                        <svg className="inline ml-3 w-4 h-4 text-green-500 dark:text-green-400" viewBox="0 0 24 24">
+                                            <path fill="currentColor" d="M20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4C12.76,4 13.5,4.11 14.2,4.31L15.77,2.74C14.61,2.26 13.34,2 12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12M7.91,10.08L6.5,11.5L11,16L21,6L19.59,4.58L11,13.17L7.91,10.08Z" />
+                                        </svg>
+                                    ) : null
+                            }
+                        </button>
+                    </div>
+                </div>
+                <div className='w-full h-20 | flex justify-between items-center | px-4'>
+                    <div className='h-full'>
+                    </div>
+                    <div className='h-full | flex items-center justify-end | space-x-4'>
+                        <button
+                            className={classNames(
+                                "flex items-center justify-center | px-4 py-2 | text-md | rounded-md | font-bold",
+                                "bg-gradient-to-tr from-blue-800 to-blue-500 text-white",
+                                "btn btn-sm capitalize",
+                                "border-0",
+                                "hover:shadow-blue-900",
+                                "px-4"
+                            )}
+                            onClick={() => {
+                                this.setState({
+                                    currentStep: this.state.currentStep + 1,
+                                })
+                            }}
+                        >
+                            Next Step
+                        </button>
+                        <button
+                            className={classNames(
+                                "flex items-center justify-center | px-4 py-2 | text-md | rounded-md | font-bold",
+                                "bg-gradient-to-tr from-red-800 to-red-500 text-white",
+                                "btn btn-sm capitalize",
+                                "border-0",
+                                "hover:shadow-red-900",
+                                "px-4"
+                            )}
+                            onClick={() => {
+                                this.context.changeState({
+                                    show: false,
+                                    pressed: {
+                                        status: "rejected",
+                                    }
+                                })
+                            }}
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
             </div>
         )
     }
 
     worldStep() {
         return (
-            <div className="flex flex-col items-center">
-                <h3>World Step</h3>
+            <div className="flex flex-col justify-between items-center | h-full w-full">
+                <div className='w-full h-full | px-4 | flex flex-col items-center justify-center | space-y-4'>
+                    <div class="flex flex-col justify-center items-center space-y-4">
+                        <p className="form-label inline-block mb-2 dark:text-white text-gray-700">Icon Image (Optional)</p>
+                        <button
+                            className={classNames(
+                                "flex items-center justify-center | px-4 py-2 | text-md | rounded-md | font-bold",
+                                "bg-gray-200 dark:bg-gray-800"
+                            )}
+                            onClick={() => {
+                                this.context.getLocalPath({
+                                    directory: true
+                                }).then(r => {
+                                    this.setState({
+                                        worldPath: r,
+                                    });
+                                });
+                            }}
+                        >
+                            Select world
+                            {
+                                this.state.worldPath ?
+                                    (
+                                        <svg className="inline ml-3 w-4 h-4 text-green-500 dark:text-green-400" viewBox="0 0 24 24">
+                                            <path fill="currentColor" d="M20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4C12.76,4 13.5,4.11 14.2,4.31L15.77,2.74C14.61,2.26 13.34,2 12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12M7.91,10.08L6.5,11.5L11,16L21,6L19.59,4.58L11,13.17L7.91,10.08Z" />
+                                        </svg>
+                                    ) : null
+                            }
+                        </button>
+                    </div>
+                </div>
+                <div className='w-full h-20 | flex justify-between items-center | px-4'>
+                    <div className='h-full'>
+                    </div>
+                    <div className='h-full | flex items-center justify-end | space-x-4'>
+                        <button
+                            className={classNames(
+                                "flex items-center justify-center | px-4 py-2 | text-md | rounded-md | font-bold",
+                                "bg-gradient-to-tr from-blue-800 to-blue-500 text-white",
+                                "btn btn-sm capitalize",
+                                "border-0",
+                                "hover:shadow-blue-900",
+                                "px-4"
+                            )}
+                            onClick={() => {
+                                this.setState({
+                                    currentStep: this.state.currentStep + 1,
+                                })
+                            }}
+                        >
+                            Next Step
+                        </button>
+                        <button
+                            className={classNames(
+                                "flex items-center justify-center | px-4 py-2 | text-md | rounded-md | font-bold",
+                                "bg-gradient-to-tr from-red-800 to-red-500 text-white",
+                                "btn btn-sm capitalize",
+                                "border-0",
+                                "hover:shadow-red-900",
+                                "px-4"
+                            )}
+                            onClick={() => {
+                                this.context.changeState({
+                                    show: false,
+                                    pressed: {
+                                        status: "rejected",
+                                    }
+                                })
+                            }}
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    summaryStep() {
+        return (
+            <div className="flex flex-col justify-between items-center | h-full w-full">
+                <div className='w-full h-full | px-4 | flex flex-col justify-start items-center | space-y-4'>
+
+                    <div className='flex justify-start items-center | space-x-4'>
+                        <span className='text-xl font-bold'>Provider</span>
+                        <span className='text-md | px-4 py-2 | bg-gray-200 dark:bg-gray-800 rounded-lg'>
+                            {
+                                String(this.state.serverType).charAt(0).toUpperCase() + String(this.state.serverType).slice(1)
+                            }
+                        </span>
+                    </div>
+                    <div className='flex justify-start items-center | space-x-4'>
+                        <span className='text-xl font-bold'>Version</span>
+                        <span className='text-md | px-4 py-2 | bg-gray-200 dark:bg-gray-800 rounded-lg'>
+                            {
+                                String(this.state.serverVersion)
+                            }
+                        </span>
+                    </div>
+                    {
+                        this.state.serverType === "forge" && this.state.modsPath !== "" ?
+                            (
+                                <div className='flex justify-start items-center | space-x-4'>
+                                    <span className='text-xl font-bold'>Mods</span>
+                                    <span className='text-md | px-4 py-2 | bg-gray-200 dark:bg-gray-800 rounded-lg'>
+                                        {
+                                            this.state.modsPath
+                                        }
+                                    </span>
+                                </div>
+                            ) : null
+                    }
+                    {
+                        this.state.propertiesPath !== "" ?
+                            (
+                                <div className='flex justify-start items-center | space-x-4'>
+                                    <span className='text-xl font-bold'>Properties</span>
+                                    <span className='text-md | px-4 py-2 | bg-gray-200 dark:bg-gray-800 rounded-lg'>
+                                        {
+                                            this.state.propertiesPath
+                                        }
+                                    </span>
+                                </div>
+                            ) : null
+                    }
+                    {
+                        this.state.iconPath !== "" ?
+                            (
+                                <div className='flex justify-start items-center | space-x-4'>
+                                    <span className='text-xl font-bold'>Icon</span>
+                                    <span className='text-md | px-4 py-2 | bg-gray-200 dark:bg-gray-800 rounded-lg'>
+                                        {
+                                            this.state.iconPath
+                                        }
+                                    </span>
+                                </div>
+                            ) : null
+                    }
+                    {
+                        this.state.worldPath !== "" ?
+                            (
+                                <div className='flex justify-start items-center | space-x-4'>
+                                    <span className='text-xl font-bold'>World</span>
+                                    <span className='text-md | px-4 py-2 | bg-gray-200 dark:bg-gray-800 rounded-lg'>
+                                        {
+                                            this.state.worldPath
+                                        }
+                                    </span>
+                                </div>
+                            ) : null
+                    }
+                </div>
+                <div className='w-full h-20 | flex justify-between items-center | px-4'>
+                    <div className='h-full'>
+                    </div>
+                    <div className='h-full | flex items-center justify-end | space-x-4'>
+                        <button
+                            className={classNames(
+                                "flex items-center justify-center | px-4 py-2 | text-md | rounded-md | font-bold",
+                                "bg-gradient-to-tr from-blue-800 to-blue-500 text-white",
+                                "btn btn-sm capitalize",
+                                "border-0",
+                                "hover:shadow-blue-900",
+                                "px-4"
+                            )}
+                        >
+                            Create
+                        </button>
+                        <button
+                            className={classNames(
+                                "flex items-center justify-center | px-4 py-2 | text-md | rounded-md | font-bold",
+                                "bg-gradient-to-tr from-red-800 to-red-500 text-white",
+                                "btn btn-sm capitalize",
+                                "border-0",
+                                "hover:shadow-red-900",
+                                "px-4"
+                            )}
+                            onClick={() => {
+                                this.context.changeState({
+                                    show: false,
+                                    pressed: {
+                                        status: "rejected",
+                                    }
+                                })
+                            }}
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
             </div>
         )
     }
@@ -169,6 +733,7 @@ class ServerCreator extends Component {
             "Properties",
             "Icon",
             "World",
+            "Summary",
         ];
         // Remove null steps
         steps = steps.filter(step => step);
@@ -182,13 +747,15 @@ class ServerCreator extends Component {
             case 1: case 2:
                 if (this.state.serverType === "forge" && step === 1) {
                     return this.modsStep();
-                } else {
+                } else if (this.state.serverType !== "forge" && step === 1) {
                     return this.propertiesStep();
+                } else {
+                    return this.iconStep();
                 }
             case 3:
-                return this.iconStep();
-            case 4:
                 return this.worldStep();
+            case 4:
+                return this.summaryStep();
             default:
                 return "Unknown step";
         }
@@ -202,6 +769,23 @@ class ServerCreator extends Component {
                     'flex flex-col justify-start items-center'
                 )}>
                     <div className='relative w-full h-28 | px-4 py-2 | flex items-center justify-center'>
+                        <div className={classNames(
+                            'absolute | h-full w-24 | top-0 left-0',
+                            'flex items-center justify-center',
+                            this.state.currentStep == 0 ? 'hidden' : ''
+                        )}>
+                            <button type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 bg-gray-100 dark:bg-gray-900 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white" data-modal-toggle="popup-modal"
+                                onClick={() => {
+                                    this.setState({
+                                        currentStep: this.state.currentStep - 1,
+                                    })
+                                }}
+                            >
+                                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
                         <ul class="steps">
                             {
                                 this.getSteps().map((step, index) => {

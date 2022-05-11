@@ -15,6 +15,9 @@ const AppContext = React.createContext({
     createModal: () => {},
     closeModal: () => {},
 
+    // FilePaths
+    getLocalPath: () => {},
+
     // Error
     error: null,
     sendError: () => {},
@@ -39,6 +42,10 @@ const AppContext = React.createContext({
     serverImport: () => {},
     serverRemove: () => {},
     serverUpdate: () => {},
+
+    // Versions
+    availableVersions: null,
+    getAvailableVersions: () => {},
 
 });
 
