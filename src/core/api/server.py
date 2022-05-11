@@ -1,5 +1,6 @@
 import datetime
 import json
+import logging
 import os
 import shutil
 import threading
@@ -14,6 +15,10 @@ from mscli.core.builder.forge import ForgeBuilder
 from mscli.core.builder.vanilla import VanillaBuilder
 from mscli.core.jvm.jvm import MinecraftJVM
 from mscli.core.jvm.server import MinecraftServer
+
+from mscli.core.configuration.properties import Properties1122, Properties118
+from mscli.core.builder.vanilla import VanillaBuilder, VanillaServer
+from mscli.core.builder.forge import ForgeBuilder, ForgeServer
 
 class ServerAPI(APIComponent):
 
@@ -399,3 +404,105 @@ class ServerAPI(APIComponent):
         self.api.registry.remove(registry_object=registry_object)
 
         return True
+
+    def server_create(self,
+        provider: str,
+        version: str,
+        extra: dict = None):
+
+        hasWorld = "world" in extra and extra["world"] is not None
+        hasProperties = "properties" in extra and extra["properties"] is not None
+        hasMods = "mods" in extra and extra["mods"] is not None
+        hasIcon = "icon" in extra and extra["icon"] is not None
+
+        providerObject = None
+        propertiesObject = None
+        
+        # TODO: Validate input
+        if hasProperties and (extra["properties"] is None or not os.path.exists(extra["properties"]) or (os.path.exists(extra["properties"]) and not os.path.isfile(extra["properties"]))):
+            raise Exception("Invalid properties file")
+        if hasMods and (extra["mods"] is None or not os.path.exists(extra["mods"]) or (os.path.exists(extra["mods"]) and not os.path.isfile(extra["mods"]))):
+            raise Exception("Invalid mods file")
+        if hasIcon and (extra["icon"] is None or not os.path.exists(extra["icon"]) or (os.path.exists(extra["icon"]) and not os.path.isfile(extra["icon"]))):
+            raise Exception("Invalid icon file")
+        if hasWorld and (extra["world"] is None or not os.path.exists(extra["world"]) or (os.path.exists(extra["world"]) and not os.path.isdir(extra["world"]))):
+            raise Exception("Invalid world path")
+
+        # TODO: Parse provider
+        for v in self.api.versions.get_versions():
+            if v.name == version:
+                providerObject = v.get_provider(provider)
+                break
+
+        # TODO: Parse properties
+        if version == "1.18":
+            propertiesObject = Properties118(
+                json_data=Properties118.load(extra["properties"]) if hasProperties else None
+            )
+        elif version == "1.12.2":
+            propertiesObject = Properties1122(
+                json_data=Properties1122.load(extra["properties"]) if hasProperties else None
+            )
+        else:
+            raise Exception("Invalid version")
+        
+        serverObject = None
+        builderObject = None
+
+        if provider == "vanilla":
+            serverObject = VanillaServer(
+                properties=propertiesObject,
+                icon=extra["icon"] if hasIcon else None,
+                world=extra["world"] if hasWorld else None
+            )
+        elif provider == "forge":
+            serverObject = ForgeServer(
+                properties=propertiesObject,
+                icon=extra["icon"] if hasIcon else None,
+                world=extra["world"] if hasWorld else None,
+                mods=extra["mods"] if hasMods else None
+            )
+        else:
+            raise Exception("Invalid provider")
+
+        if provider == "vanilla":
+            builderObject = VanillaBuilder(
+                configuration=self.api.configuration,
+                credentials=self.api.credentials,
+                registry=self.registry,
+                provider=providerObject,
+                server=serverObject
+            )
+        elif provider == "forge":
+            builderObject = ForgeBuilder(
+                configuration=self.api.configuration,
+                credentials=self.api.credentials,
+                registry=self.registry,
+                provider=providerObject,
+                server=serverObject
+            )
+
+        jvm_provider: dict = self.api.configuration.get_jvms()['liberica']
+        jvm_provider_path: str = None
+        for n, d in jvm_provider.items():
+            if n == providerObject.jvm:
+                jvm_provider_path = d['jvm_path']
+                break
+        if jvm_provider_path is None:
+            logging.info("JVM not found, installing...")
+            # Install the JVM
+            jre = MinecraftJVM(
+                configuration=self.api.configuration,
+                jvm=self.api.jvm
+            )
+            jre.install(
+                version=provider.jvm,
+                provider='liberica',
+                dist=self.api.configuration.get_os(),
+                arch=self.api.configuration.get_arch()
+            )
+            logging.info("JVM installed")
+
+        id = builderObject.create()
+
+        return id

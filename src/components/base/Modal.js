@@ -78,6 +78,10 @@ class ServerCreator extends Component {
             worldPath: "",
             modsPath: "",
 
+            creationLoading: false,
+            creationCompleted: false,
+            creationSuccess: false,
+            creationErrorMessage: null,
         }
 
     }
@@ -172,6 +176,10 @@ class ServerCreator extends Component {
                                     this.setState({
                                         serverType: String(e.target.value).toLowerCase(),
                                         serverVersion: null,
+                                        propertiesPath: "",
+                                        iconPath: "",
+                                        worldPath: "",
+                                        modsPath: "",
                                     });
                                 }}
                                 defaultValue={this.state.serverType}
@@ -295,7 +303,7 @@ class ServerCreator extends Component {
             <div className="flex flex-col justify-between items-center | h-full w-full">
                 <div className='w-full h-full | px-4 | flex flex-col items-center justify-center | space-y-4'>
                     <div class="flex flex-col justify-center items-center space-y-4">
-                        <p className="form-label inline-block mb-2 dark:text-white text-gray-700">Icon Image (Optional)</p>
+                        <p className="form-label inline-block mb-2 dark:text-white text-gray-700">Mods file (Optional)</p>
                         <button
                             className={classNames(
                                 "flex items-center justify-center | px-4 py-2 | text-md | rounded-md | font-bold",
@@ -535,7 +543,7 @@ class ServerCreator extends Component {
             <div className="flex flex-col justify-between items-center | h-full w-full">
                 <div className='w-full h-full | px-4 | flex flex-col items-center justify-center | space-y-4'>
                     <div class="flex flex-col justify-center items-center space-y-4">
-                        <p className="form-label inline-block mb-2 dark:text-white text-gray-700">Icon Image (Optional)</p>
+                        <p className="form-label inline-block mb-2 dark:text-white text-gray-700">World Folder (Optional)</p>
                         <button
                             className={classNames(
                                 "flex items-center justify-center | px-4 py-2 | text-md | rounded-md | font-bold",
@@ -697,8 +705,37 @@ class ServerCreator extends Component {
                                 "hover:shadow-blue-900",
                                 "px-4"
                             )}
+                            onClick={() => {
+                                if (this.state.creationLoading) return;
+                                this.createServer();
+                            }}
                         >
                             Create
+                            {
+                                this.state.creationLoading ?
+                                    (
+                                        <svg role="status" className="inline ml-3 w-4 h-4 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#E5E7EB" />
+                                            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentColor" />
+                                        </svg>
+                                    )
+                                    :
+                                    this.state.creationCompleted ?
+                                        (
+                                            this.state.creationSuccess ?
+                                                (
+                                                    // Success Check SVG
+                                                    <svg className="inline ml-3 w-4 h-4 text-white" viewBox="0 0 24 24">
+                                                        <path fill="currentColor" d="M20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4C12.76,4 13.5,4.11 14.2,4.31L15.77,2.74C14.61,2.26 13.34,2 12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12M7.91,10.08L6.5,11.5L11,16L21,6L19.59,4.58L11,13.17L7.91,10.08Z" />
+                                                    </svg>
+                                                ) :
+                                                (
+                                                    <svg className="inline ml-3 w-4 h-4 text-white" viewBox="0 0 24 24">
+                                                        <path fill="currentColor" d="M11,15H13V17H11V15M11,7H13V13H11V7M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20Z" />
+                                                    </svg>
+                                                )
+                                        ) : null
+                            }
                         </button>
                         <button
                             className={classNames(
@@ -710,6 +747,7 @@ class ServerCreator extends Component {
                                 "px-4"
                             )}
                             onClick={() => {
+                                if (this.state.creationLoading) return;
                                 this.context.changeState({
                                     show: false,
                                     pressed: {
@@ -747,18 +785,105 @@ class ServerCreator extends Component {
             case 1: case 2:
                 if (this.state.serverType === "forge" && step === 1) {
                     return this.modsStep();
+                } else if (this.state.serverType == "forge" && step === 2) {
+                    return this.propertiesStep();                
                 } else if (this.state.serverType !== "forge" && step === 1) {
                     return this.propertiesStep();
                 } else {
                     return this.iconStep();
                 }
             case 3:
+                if (this.state.serverType === "forge" && step === 3) {
+                    return this.iconStep();
+                }
                 return this.worldStep();
-            case 4:
+            case 4: case 5:
+                if (this.state.serverType === "forge" && step === 4) {
+                    return this.worldStep();
+                }
                 return this.summaryStep();
             default:
                 return "Unknown step";
         }
+    }
+
+    async createServer() {
+
+        if (this.state.creationLoading) return;
+
+        this.setState({
+            creationLoading: true,
+            creationCompleted: false,
+            creationSuccess: false,
+            creationErrorMessage: null,
+        });
+
+        this.context.updateProgressBar(10);
+
+        let extras = {};
+
+        if (this.state.propertiesPath !== "") {
+            extras["properties"] = this.state.propertiesPath;
+        }
+        if (this.state.iconPath !== "") {
+            extras["icon"] = this.state.iconPath;
+        }
+        if (this.state.worldPath !== "") {
+            extras["world"] = this.state.worldPath;
+        }
+        if (this.state.modsPath !== "") {
+            extras["mods"] = this.state.modsPath;
+        }
+
+        let inter = setInterval(() => {
+            this.context.updateProgressBar(this.context.progressBarWidth + 1);
+        }, 500);
+
+        let newId = null;
+        let requestSuccess = false;
+        await this.context.serverCreate(
+            this.state.serverType,
+            this.state.serverVersion,
+            extras,
+        ).then(res => {
+            newId = res;
+            requestSuccess = true;
+        }).catch(err => {
+            requestSuccess = false;
+            this.context.sendError(String(err.message));
+            this.setState({
+                creationErrorMessage: err,
+            });
+        })
+
+        clearInterval(inter);
+
+        setTimeout(() => {
+            this.setState({
+                creationLoading: false,
+                creationCompleted: true,
+                creationSuccess: requestSuccess,
+            })
+            this.context.updateProgressBar(100);
+            setTimeout(() => {
+                this.setState({
+                    creationCompleted: false,
+                    creationSuccess: false,
+                    creationErrorMessage: null,
+                });
+                this.context.updateProgressBar(0);
+                if (requestSuccess) {
+                    this.context.getRegistryServers();
+                    this.props.changeState({
+                        show: false,
+                        pressed: {
+                            status: "completed",
+                            proceed: true,
+                        }
+                    })
+                }
+            }, 2000);
+        }, 1500);
     }
 
     render() {
@@ -776,6 +901,7 @@ class ServerCreator extends Component {
                         )}>
                             <button type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 bg-gray-100 dark:bg-gray-900 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white" data-modal-toggle="popup-modal"
                                 onClick={() => {
+                                    if (this.state.creationLoading) return;
                                     this.setState({
                                         currentStep: this.state.currentStep - 1,
                                     })

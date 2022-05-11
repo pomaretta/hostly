@@ -190,6 +190,18 @@ class Wrapper extends Component {
         });
     }
 
+    async serverCreate(
+        provider,
+        version,
+        extra
+    ) {
+        return this.api.serverCreate({
+            provider: provider,
+            version: version,
+            extra: extra,
+        });
+    }
+
     async getAvailableVersions() {
         const versions = await this.api.availableVersions();
         this.setState({
@@ -236,6 +248,7 @@ class Wrapper extends Component {
             serverImport: this.serverImport.bind(this),
             serverUpdate: this.serverUpdate.bind(this),
             serverRemove: this.serverRemove.bind(this),
+            serverCreate: this.serverCreate.bind(this),
 
             availableVersions: this.state.availableVersions,
             getAvailableVersions: this.getAvailableVersions.bind(this),

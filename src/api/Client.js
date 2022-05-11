@@ -309,6 +309,25 @@ class APIClient {
         return api.file_path(directory);
     }
 
+    async serverCreate({
+        provider,
+        version,
+        extra
+    }) {
+        if (this.env === "DEV") {
+            console.log("Creating server", provider, version, extra);
+            return new Promise((resolve, reject) => {
+                resolve("7b0306d0-4107-4a0a-89e6-57391e5d494f");
+            });
+        }
+        const api = await this.waitForApi();
+        return api.server_create(
+            provider,
+            version,
+            extra
+        );
+    }
+
     async waitForApi() {
         return new Promise((resolve, reject) => {
             // If there's already an API, resolve immediately

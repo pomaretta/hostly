@@ -42,6 +42,7 @@ const AppContext = React.createContext({
     serverImport: () => {},
     serverRemove: () => {},
     serverUpdate: () => {},
+    serverCreate: () => {},
 
     // Versions
     availableVersions: null,
