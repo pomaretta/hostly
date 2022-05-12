@@ -138,13 +138,27 @@ class Wrapper extends Component {
     }
 
     async getRegistryServer(id) {
-
-        console.log("Getting registry server", id);
-
         const registryServer = await this.api.getRegistryServerData({ id: id });
+        this.setState({
+            registryServer: registryServer,
+        });
+    }
 
-        console.log("Got registry server", registryServer);
+    async updateRegistryServer(id) {
 
+        let success = false;
+        this.api.updateRegistryServer({
+            id: id,
+        }).then(r => {
+            success = true;
+        }).catch(e => {
+            success = false;
+            this.context.sendError(e.message);
+        })
+
+        if (!success) return;
+        
+        const registryServer = await this.api.getRegistryServerData({ id: id });
         this.setState({
             registryServer: registryServer,
         });
@@ -249,6 +263,13 @@ class Wrapper extends Component {
         });
     }
 
+    async testCredentials(provider, data) {
+        return this.api.credentialsTest({
+            provider: provider,
+            data: data,
+        });
+    }
+
     async needsSetup() {
         let res = await this.api.needsSetup();
         this.setState({
@@ -304,6 +325,8 @@ class Wrapper extends Component {
             registryServer: this.state.registryServer,
             getRegistryServer: this.getRegistryServer.bind(this),
 
+            updateRegistryServer: this.updateRegistryServer.bind(this),
+
             serverRun: this.serverRun.bind(this),
             serverStop: this.serverStop.bind(this),
             serverOutput: this.serverOutput.bind(this),
@@ -321,6 +344,7 @@ class Wrapper extends Component {
             credentialsExists: this.state.credentialsExists,
             getCredentials: this.getCredentials.bind(this),
             setCredentials: this.setCredentials.bind(this),
+            testCredentials: this.testCredentials.bind(this),
 
             setup: this.state.setup,
             appLoading: this.state.appLoading,

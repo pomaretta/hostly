@@ -272,7 +272,7 @@ class Recently extends React.Component {
                     <div className="h-14 w-full | bg-gray-100 dark:bg-gray-700 | flex items-center justify-start | py-4 px-2">
                         <h3 className="text-3xl font-bold | py-1 px-4 | rounded-md | dark:text-blue-500 text-brand-blue">Friends</h3>
                     </div>
-                    <div className="py-4 px-2 | overflow-scroll | flex justify-center items-start | w-full h-full">
+                    <div className="py-4 px-2 | overflow-scroll | no-scrollbar | flex justify-center items-start | w-full h-full">
                         <div className="dark:bg-gray-700 bg-gray-100 | text-brand-blue dark:text-white | w-full h-12 | rounded-md | flex justify-between items-center | px-4 | hover:shadow-lg | cursor-pointer">
                             <div className="w-auto | flex justify-start items-center | space-x-4">
                                 <p className="font-bold">Steve</p>

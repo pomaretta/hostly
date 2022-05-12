@@ -50,6 +50,17 @@ class APIClient {
         return response;
     }
 
+    async updateRegistryServer({id}) {
+        if (this.env === "DEV") {
+            console.log("Updating registry server", id);
+            return new Promise((resolve, reject) => {
+                resolve(true);
+            });
+        }
+        const api = await this.waitForApi();
+        return api.registry_update(id);
+    }
+
     async serverRunOperation({ id }) {
 
         if (this.env === "DEV") {
@@ -417,6 +428,20 @@ class APIClient {
         }
         const api = await this.waitForApi();
         return api.setup_jre();
+    }
+
+    async credentialsTest({
+        provider, 
+        data
+    }) {
+        if (this.env === "DEV") {
+            console.log("Testing credentials", provider, data);
+            return new Promise((resolve, reject) => {
+                resolve(true);
+            });
+        }
+        const api = await this.waitForApi();
+        return api.credentials_test(provider, data);
     }
 
     async waitForApi() {

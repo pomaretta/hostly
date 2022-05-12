@@ -241,6 +241,7 @@ class Server extends Page {
 
     getOnMount() {
         this.context.getRegistryServer(this.props.router.params.id);
+        this.context.updateRegistryServer(this.props.router.params.id);
         this.setState({
             loadingInterval: setInterval(() => {
                 this.context.updateProgressBar(this.context.progressBarWidth + 1)
@@ -250,13 +251,20 @@ class Server extends Page {
                 this.setState({
                     server: this.context.registryServer,
                 })
-            }, 15000)
+            }, 15000),
+            fetchInterval: setInterval(async () => {
+                await this.context.updateRegistryServer(this.props.router.params.id);
+                this.setState({
+                    server: this.context.registryServer,
+                })
+            }, 60 * 1000)
         });
     }
 
     componentWillUnmount() {
         clearInterval(this.state.loadingInterval);
         clearInterval(this.state.interval);
+        clearInterval(this.state.fetchInterval);
     }
 
     componentDidUpdate() {

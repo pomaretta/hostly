@@ -32,6 +32,7 @@ const AppContext = React.createContext({
     getRegistryServers: () => {},
     registryServer: null,
     getRegistryServer: () => {},
+    updateRegistryServer: () => {},
 
     // Server
     serverRun: () => {},
@@ -53,6 +54,7 @@ const AppContext = React.createContext({
     credentialsExists: false,
     getCredentials: () => {},
     setCredentials: () => {},
+    testCredentials: () => {},
 
     // Setup
     setup: false,

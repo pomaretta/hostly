@@ -41,8 +41,4 @@ class RegistryAPI(APIComponent):
             configuration=self.api.configuration,
             credentials=self.api.credentials,
         )
-        self.__update_registry__()
-        for server in self.registry.__get_registry_objects__():
-            if server.id == id:
-                registry_object = server
-        return registry_object.to_json()
+        return True
