@@ -846,7 +846,7 @@ class Setup extends React.Component {
         }
 
         return (
-            <div className="w-screen h-screen | flex flex-col items-center justify-between | bg-white dark:bg-gray-800">
+            <div className="w-screen h-screen | flex flex-col items-center justify-between | bg-white dark:bg-gray-800 | overflow-scroll">
                 <div className="w-full h-full">
                     {
                         this.renderStep()
