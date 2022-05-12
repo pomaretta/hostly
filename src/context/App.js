@@ -48,6 +48,20 @@ const AppContext = React.createContext({
     availableVersions: null,
     getAvailableVersions: () => {},
 
+    // Credentials
+    credentials: null,
+    credentialsExists: false,
+    getCredentials: () => {},
+    setCredentials: () => {},
+
+    // Setup
+    setup: false,
+    appLoading: true,
+    hasJre: false,
+    setAppLoading: () => {},
+    initializeSetup: () => {},
+    needsSetup: () => {},
+    getHasJre: () => {},
 });
 
 export default AppContext;

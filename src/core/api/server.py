@@ -484,6 +484,7 @@ class ServerAPI(APIComponent):
 
         jvm_provider: dict = self.api.configuration.get_jvms()['liberica']
         jvm_provider_path: str = None
+
         for n, d in jvm_provider.items():
             if n == providerObject.jvm:
                 jvm_provider_path = d['jvm_path']
@@ -496,7 +497,7 @@ class ServerAPI(APIComponent):
                 jvm=self.api.jvm
             )
             jre.install(
-                version=provider.jvm,
+                version=providerObject.jvm,
                 provider='liberica',
                 dist=self.api.configuration.get_os(),
                 arch=self.api.configuration.get_arch()

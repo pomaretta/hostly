@@ -6,6 +6,7 @@ import Sidebar from "./base/Sidebar";
 import Modal from "./base/Modal";
 import Context from "../context/App";
 import Error from "../components/base/Error";
+import Loading from "./base/Loading";
 
 class Page extends Component {
 
@@ -54,6 +55,7 @@ class Page extends Component {
                 <Helmet>
                     <title>{this.state.title}</title>
                 </Helmet>
+                <Loading />
                 <Sidebar overrideRoute={this.state.overrideRoute} />
                 <Modal />
                 <Error />

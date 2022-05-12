@@ -1,5 +1,6 @@
 import os, sys
 import logging
+import requests
 import webview
 
 from mscli.domain.configuration.configuration import Configuration
@@ -8,6 +9,7 @@ from mscli.domain.jvm.jvm import JVMConfiguration
 from mscli.domain.versions.version import Version, Versions
 from mscli.domain.credentials.credentials import Credentials
 from mscli.core.configuration.registry import MinecraftRegistry
+from mscli.core.jvm.jvm import MinecraftJVM
 
 from argparse import ArgumentParser
 from datetime import datetime
@@ -152,6 +154,26 @@ def init():
             json_data=Configuration.load(config_path).json_data
         )
 
+    current_ip = configuration.get_ip()
+    new_ip = None
+    try:
+        req = requests.get(
+            url='https://api.ipify.org?format=json',
+        )
+        if req.status_code != 200:
+            raise Exception(f"Request failed with status code {req.status_code}")
+        new_ip = req.json()['ip']
+    except Exception as e:
+        logging.error(f"Failed to get current IP: {e}")
+    
+    if new_ip is not None and new_ip != current_ip:
+        configuration.json_data['ip'] = new_ip
+        # Dump new 
+        configuration.dump(
+            data=configuration.json_data,
+            configuration_file=config_path
+        )
+
     # ================= #
     #   Credentials     #
     # ================= #
@@ -249,6 +271,26 @@ def init():
         versions = Versions(
             json_data=Versions.load(versions_path).json_data
         )
+
+    # ================= #
+    #   JRE             #
+    # ================= #
+
+    # TODO: Initialize on /setup
+    # jre = None
+    # if not "jre" in configuration.json_data:
+    #     logging.info("JRE configuration not found")
+    #     jre = MinecraftJVM(
+    #         configuration=configuration,
+    #         jvm=jvm
+    #     )
+    #     jre.install(
+    #         version='1.8',
+    #         provider='liberica',
+    #         dist=configuration.get_os(),
+    #         arch=configuration.get_arch()
+    #     )
+    #     logging.info("JRE configuration created")
 
     logging.debug("Initializing GUI")
     main(

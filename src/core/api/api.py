@@ -6,6 +6,8 @@ from .registry import RegistryAPI
 from .server import ServerAPI
 from .version import VersionAPI
 from .file import FileAPI
+from .credentials import CredentialsAPI
+from .setup import SetupAPI
 
 class WebAPI(API):
 
@@ -14,6 +16,8 @@ class WebAPI(API):
         ServerAPI,
         VersionAPI,
         FileAPI,
+        CredentialsAPI,
+        SetupAPI,
     ]
 
     def __init__(self, configuration: Configuration, jvm: JVMConfiguration, registry: Registry, versions: Versions, log: Log, credentials: Credentials) -> None:

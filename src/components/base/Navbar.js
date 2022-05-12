@@ -54,7 +54,9 @@ class Navbar extends React.Component {
 											</div>
 										</label>
 										<ul tabindex="0" className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 | dark:bg-black dark:border-2 dark:border-blue-500">
-											<li><a>Settings</a></li>
+											<li><a
+												href='/credentials'
+											>Credentials</a></li>
 										</ul>
 									</div>
 								</div>

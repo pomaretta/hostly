@@ -31,6 +31,10 @@ $on-error: #FFFFFF;
     background-color: $primary;
 }
 
+.hover\:bg-jt-primary:hover {
+    background-color: $primary;
+}
+
 .bg-jt-primary-100 {
     background-color:  rgb(196, 246, 255);
 }

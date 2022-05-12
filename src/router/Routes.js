@@ -1,5 +1,7 @@
 import Servers from '../pages/Servers';
 import Server from '../pages/Server';
+import Credentials from '../pages/Credentials';
+import Setup from '../pages/Setup';
 
 const routes = [
     {
@@ -28,12 +30,19 @@ const routes = [
         path: '/servers/:id',
         hide: true,
         element: <Server />,
-        icon: (
-            <svg viewBox="0 0 24 24">
-                <path fill="currentColor" d="M13,3V9H21V3M13,21H21V11H13M3,21H11V15H3M3,13H11V3H3V13Z" />
-            </svg>
-        )
     },
+    {
+        key: 'credentials',
+        path: '/credentials',
+        element: <Credentials />,
+        hide: true,
+    },
+    {
+        key: 'setup',
+        path: '/setup',
+        element: <Setup />,
+        hide: true,
+    }
 ];
 
 

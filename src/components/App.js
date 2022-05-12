@@ -49,6 +49,13 @@ class Wrapper extends Component {
             registryServer: null,
 
             availableVersions: null,
+
+            credentials: null,
+            credentialsExists: false,
+
+            setup: false,
+            hasJre: false,
+            appLoading: true,
         };
 
     }
@@ -209,6 +216,63 @@ class Wrapper extends Component {
         });
     }
 
+    async getCredentials() {
+
+        const exists = await this.api.credentialsExists();
+        if (!exists) {
+            this.setState({
+                credentialsExists: false,
+                credentials: null,
+            });
+            return;
+        }
+
+        const credentials = await this.api.credentialsData();
+        if (!credentials) {
+            this.setState({
+                credentialsExists: false,
+                credentials: null,
+            });
+            return;
+        }
+
+        this.setState({
+            credentialsExists: true,
+            credentials: credentials,
+        });
+    }
+
+    async setCredentials(provider, data) {
+        return this.api.credentialsCreateUpdate({
+            provider: provider,
+            data: data,
+        });
+    }
+
+    async needsSetup() {
+        let res = await this.api.needsSetup();
+        this.setState({
+            setup: res,
+        });
+    }
+    
+    async getHasJre() {
+        let res = await this.api.hasJre();
+        this.setState({
+            hasJre: res,
+        });
+    }
+    
+    async initializeSetup() {
+        return this.api.initializeSetup();
+    }
+
+    setAppLoading(loading) {
+        this.setState({
+            appLoading: loading,
+        });
+    }
+
     render() {
         return <Context.Provider value={{
             
@@ -252,6 +316,19 @@ class Wrapper extends Component {
 
             availableVersions: this.state.availableVersions,
             getAvailableVersions: this.getAvailableVersions.bind(this),
+
+            credentials: this.state.credentials,
+            credentialsExists: this.state.credentialsExists,
+            getCredentials: this.getCredentials.bind(this),
+            setCredentials: this.setCredentials.bind(this),
+
+            setup: this.state.setup,
+            appLoading: this.state.appLoading,
+            needsSetup: this.needsSetup.bind(this),
+            initializeSetup: this.initializeSetup.bind(this),
+            setAppLoading: this.setAppLoading.bind(this),
+            hasJre: this.state.hasJre,
+            getHasJre: this.getHasJre.bind(this),
         }}>
             <Router />
         </Context.Provider>;

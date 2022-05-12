@@ -12,6 +12,10 @@ import Context from '../context/App';
 class Router extends React.Component {
 
     componentDidMount() {        
+        // Needs setup
+        this.context.needsSetup();
+        // JRE
+        this.context.getHasJre();
         // Get the servers
         this.context.getRegistryServers();
     }

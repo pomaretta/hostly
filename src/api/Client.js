@@ -1,6 +1,9 @@
 import { bool } from "prop-types";
 import { RegistryCollection } from "./collection/registry";
 import { VersionCollection } from './collection/versions';
+
+import { Credentials } from "./domain/credentials";
+
 import Random from "./Random";
 
 class APIClient {
@@ -326,6 +329,94 @@ class APIClient {
             version,
             extra
         );
+    }
+
+    async credentialsProvider() {
+        if (this.env === "DEV") {
+            console.log("Getting credentials provider");
+            return new Promise((resolve, reject) => {
+                resolve("ftp");
+            });
+        }
+        const api = await this.waitForApi();
+        return api.credentials_provider();
+    }
+
+    async credentialsData() {
+        if (this.env === "DEV") {
+            console.log("Getting credentials data");
+            return new Promise((resolve, reject) => {
+                resolve(new Credentials({
+                    schema: "ftp",
+                    hostname: "localhost",
+                    port: 21,
+                    username: "username",
+                    password: "password"
+                }));
+            });
+        }
+        const api = await this.waitForApi();
+        const data = await api.credentials_get();
+        return new Credentials(data);
+    } 
+
+    async credentialsExists() {
+        if (this.env === "DEV") {
+            console.log("Checking credentials exists");
+            return new Promise((resolve, reject) => {
+                resolve(true);
+                // resolve(false);
+            });
+        }
+        const api = await this.waitForApi();
+        return api.credentials_exists();
+    }
+    
+    async credentialsCreateUpdate({
+        provider,
+        data
+    }) {
+        if (this.env === "DEV") {
+            console.log("Creating credentials", provider, data);
+            return new Promise((resolve, reject) => {
+                resolve(true);
+            });
+        }
+        const api = await this.waitForApi();
+        return api.credentials_update(provider, data);
+    }
+
+    async needsSetup() {
+        if (this.env === "DEV") {
+            console.log("Checking if needs setup");
+            return new Promise((resolve, reject) => {
+                resolve(true);
+            });
+        }
+        const api = await this.waitForApi();
+        return api.setup_needs();
+    }
+
+    async hasJre() {
+        if (this.env === "DEV") {
+            console.log("Checking if has jre");
+            return new Promise((resolve, reject) => {
+                resolve(false);
+            });
+        }
+        const api = await this.waitForApi();
+        return api.setup_has_jre();
+    }
+
+    async initializeSetup() {
+        if (this.env === "DEV") {
+            console.log("Initializing setup");
+            return new Promise((resolve, reject) => {
+                resolve(true);
+            });
+        }
+        const api = await this.waitForApi();
+        return api.setup_jre();
     }
 
     async waitForApi() {
