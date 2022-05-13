@@ -56,6 +56,9 @@ const AppContext = React.createContext({
     setCredentials: () => {},
     testCredentials: () => {},
 
+    // Configuration
+    updateIp: () => {},
+
     // Setup
     setup: false,
     appLoading: true,

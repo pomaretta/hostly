@@ -11,6 +11,14 @@ import Context from '../context/App';
 // Router
 class Router extends React.Component {
 
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            eventLoop: null,
+        }
+    }
+
     componentDidMount() {        
         // Needs setup
         this.context.needsSetup();
@@ -18,6 +26,18 @@ class Router extends React.Component {
         this.context.getHasJre();
         // Get the servers
         this.context.getRegistryServers();
+        // Update IP
+        this.context.updateIp();
+        // Event loop
+        this.setState({
+            eventLoop: setInterval(() => {
+                this.context.updateIp();
+            }, 60 * 1000),
+        });
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.state.eventLoop);
     }
 
     render() {

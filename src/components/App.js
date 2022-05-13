@@ -288,6 +288,10 @@ class Wrapper extends Component {
         return this.api.initializeSetup();
     }
 
+    async updateIp() {
+        return this.api.updateIp();
+    }
+
     setAppLoading(loading) {
         this.setState({
             appLoading: loading,
@@ -345,6 +349,8 @@ class Wrapper extends Component {
             getCredentials: this.getCredentials.bind(this),
             setCredentials: this.setCredentials.bind(this),
             testCredentials: this.testCredentials.bind(this),
+
+            updateIp: this.updateIp.bind(this),
 
             setup: this.state.setup,
             appLoading: this.state.appLoading,

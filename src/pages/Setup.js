@@ -47,11 +47,10 @@ class Setup extends React.Component {
 
     startHostly() {
         this.context.setAppLoading(false);
-
-        setTimeout(() => {
-            document.location.href = '/';
-        }, 1500)
-
+        document.location.href = '/';
+        // setTimeout(() => {
+        //     document.location.href = '/';
+        // }, 500);
     }
 
     async saveCredentials() {

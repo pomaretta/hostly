@@ -444,6 +444,17 @@ class APIClient {
         return api.credentials_test(provider, data);
     }
 
+    async updateIp() {
+        if (this.env === "DEV") {
+            console.log("Updating ip");
+            return new Promise((resolve, reject) => {
+                resolve(true);
+            });
+        }
+        const api = await this.waitForApi();
+        return api.configuration_updateip();
+    }
+
     async waitForApi() {
         return new Promise((resolve, reject) => {
             // If there's already an API, resolve immediately
