@@ -251,7 +251,7 @@ class ServerAPI(APIComponent):
         file_path = file_paths[0]
 
         # Check if file exists and is valid
-        if not os.path.isfile(file_path) or not file_path.endswith('.json') or not os.access(file_path, os.R_OK):
+        if not os.path.isfile(file_path) or not os.access(file_path, os.R_OK):
             raise Exception("Invalid file")
 
         registryObject = None

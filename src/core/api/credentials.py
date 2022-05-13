@@ -1,3 +1,4 @@
+import logging
 import os
 from ..domain.api import API, APIComponent
 
@@ -20,6 +21,8 @@ class CredentialsAPI(APIComponent):
         username = creds.get_ftp_username()
         password = creds.get_ftp_password()
 
+        logging.debug("Testing with hostname: %s, username: %s, password: %s" % (hostname, username, password))
+        
         FTP(
             host=hostname,
             user=username,
@@ -47,12 +50,14 @@ class CredentialsAPI(APIComponent):
 
 
     def __test__(self, creds: Credentials):
-        if (creds.json_data["schema"] == "ftp"):
+        if (creds.get_schema()["schema"] == "ftp"):
+            logging.debug("Testing FTP credentials")
             return self.__test_ftp__(creds)
-        elif (creds.json_data["schema"] == "sftp"):
+        elif (creds.get_schema()["schema"] == "sftp"):
+            logging.debug("Testing SFTP credentials")
             return self.__test_sftp__(creds)
         else:
-            raise Exception("Provider not supported")
+            raise Exception("Credentials are not valid")
 
     def credentials_exists(self):
         return self.api.credentials is not None and self.api.credentials.json_data is not None
@@ -63,32 +68,23 @@ class CredentialsAPI(APIComponent):
         return self.api.credentials.get_schema()["schema"]
 
     def credentials_test(self, provider: str, data: dict):
-        creds = Credentials(
-            json_data={
-                "schema": provider,
-                **data
-            }
-        )
+        creds = Credentials()
+        creds.save_data(provider, data)
         return self.__test__(creds)
 
     def credentials_update(self, provider: str, data: dict):
-
-        creds = Credentials(
-            json_data={
-                "schema": provider,
-                **data
-            }
-        )
+        creds = self.api.credentials
+        if creds is None:
+            creds = Credentials()
+        creds.save_data(provider, data)
         if not creds.validate():
             raise Exception("Credentials are not valid")
-        
         credentials_path = os.path.expanduser("~/.mscli/config/credentials.json")
         self.api.credentials = creds
         self.api.credentials.dump(
             data=creds.json_data,
             configuration_file=credentials_path
         )
-
         return True
 
     def credentials_get(self):
