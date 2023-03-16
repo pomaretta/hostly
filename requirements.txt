@@ -1,4 +1,4 @@
-git+https://www.github.com/poddile/mscli#egg=mscli
+git+https://www.github.com/pomaretta/mscli#egg=mscli
 pywebview
 flask
 pyinstaller
